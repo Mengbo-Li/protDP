@@ -1,0 +1,11 @@
+url: ~
+template:
+  bootstrap: 5
+  bootswatch: sandstone
+navbar:
+  structure:
+    left:  [intro, articles, reference]
+  components:
+    articles:
+      text: Supplementary results
+      href: articles/supp.html

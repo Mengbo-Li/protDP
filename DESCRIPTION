@@ -1,0 +1,18 @@
+Package: proteoDP
+Type: Package
+Title: Estimation of the Detection Probability Curve in MS-based Proteomics Data
+Version: 0.1.0
+Authors@R:  
+    c(person("Mengbo", "Li", 
+            email = "mengboli103@gmail.com", 
+            role = c("aut", "cre")))
+Maintainer: Mengbo Li <li.me@wehi.edu.au>
+Description: Detection probability curve is estimated for mass spectrometry-
+    based proteomics data. This package hosts all used functions and a few 
+    public data examples for reference. 
+License: Apache License 2.0
+Imports: stats, limma, splines
+Suggests: knitr, tidyverse, markdown
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2

@@ -1,0 +1,131 @@
+---
+title: "Supplementary results and figures"
+author: 
+- name: Mengbo Li
+  affiliation: Bioinformatics Division, WEHI
+output:
+  BiocStyle::html_document:
+    toc_float: true
+package: BiocStyle
+---
+
+
+```{r setup, include = FALSE}
+options(width = 100, digits = 3)
+knitr::opts_chunk$set(collapse = TRUE, 
+                      comment = "#>", 
+                      echo = TRUE, 
+                      cache = FALSE, 
+                      prompt = FALSE,
+                      tidy = TRUE,
+                      comment = NA, 
+                      message = FALSE, 
+                      warning = FALSE, 
+                      tidy = TRUE, 
+                      tidy.opts = list(width.cutoff = 60),
+                      fig.width = 8, 
+                      fig.height = 5, 
+                      dev = "png")
+```
+
+# Overview
+
+
+# Load packages
+
+```{r}
+library(tidyverse)
+library(proteoDP)
+```
+
+Consider natural cubic splines generated with 1, 3 and 5 degrees of freedom:
+
+```{r}
+dfList <- seq(1, 5, 2)
+lineColours <- RColorBrewer::brewer.pal(4, "Dark2")
+```
+
+
+# Dataset S1: Sydney heart bank data
+
+This dataset is acquired by DIA and processed with Spectronaut with a spectral library generated from pooled DDA samples. 
+
+## Data summary
+
+```{r}
+data("heart")
+dim(heart)
+heart[1:5, 1:5]
+```
+
+The overall proportion of missing data 
+
+```{r}
+sum(is.na(heart)) / length(heart)
+```
+
+## Empirical logistic splines for detected proportions
+
+```{r}
+heartRes <- gatherResults(heart)
+```
+
+```{r}
+for (i in 1:length(dfList)) {
+  if (i == 1)
+    plotEmpSplines(heartRes$nuis, X = heartRes$splineFits_params0[[i]]$X, 
+                   heartRes$splineFits[[i]]$params, 
+                   lineCol = lineColours[i], 
+                   jitter.amount = 1/ncol(heart)/2, point.cex = 0.1, 
+                   capped = FALSE)
+  if (i > 1)
+    plotEmpSplines(heartRes$nuis, X = heartRes$splineFits_params0[[i]]$X, 
+                   heartRes$splineFits[[i]]$params, 
+                   plot.dotts = FALSE, 
+                   lineCol = lineColours[i], capped = FALSE)
+}
+legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1)
+```
+
+## Reduced deviance compared to an intercept model
+
+```{r}
+heartRes$devPlot + 
+  ylim(0.95, 1)
+```
+
+
+## Empirical logit-linear curve with capped probabilities
+
+```{r}
+heartRes$cappedLinearFit$params
+plotEmpSplines(heartRes$nuis, X = heartRes$splineFits_params0[[1]]$X, 
+               heartRes$cappedLinearFit$params, 
+               lineCol = lineColours[1], 
+               jitter.amount = 1/ncol(heart)/2, point.cex = 0.1)
+```
+
+## Detection probability curve assuming normal observed intensities
+
+```{r}
+heartRes$dpcFit$beta
+plotDPC(heartRes$nuis, heartRes$dpcFit, jitter.amount = 1/ncol(heart)/2, point.cex = 0.1)
+```
+
+
+
+
+
+
+# References
+
+- Li, M., Parker, B.L., Pearson, E., Hunter, B., Cao, J., Koay, Y.C., Guneratne, O., James, D.E., Yang, J., Lal, S. and O’Sullivan, J.F., 2020. Core functional nodes and sex-specific pathways in human ischaemic and dilated cardiomyopathy. *Nature communications*, 11(1), pp.1-12.
+
+
+
+# Session information
+
+```{r}
+sessionInfo()
+```
+

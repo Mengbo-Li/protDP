@@ -1,0 +1,358 @@
+---
+title: 'Main results and figures'
+author: 
+- name: Mengbo Li
+  affiliation: Bioinformatics Division, WEHI
+output:
+  BiocStyle::html_document:
+    toc_float: true
+package: BiocStyle
+vignette: >
+  %\VignetteIndexEntry{Main results and figures}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r setup, include = FALSE}
+options(width = 100, digits = 3)
+knitr::opts_chunk$set(collapse = TRUE, 
+                      comment = "#>", 
+                      echo = TRUE, 
+                      cache = FALSE, 
+                      prompt = FALSE,
+                      tidy = TRUE,
+                      comment = NA, 
+                      message = FALSE, 
+                      warning = FALSE, 
+                      tidy = TRUE, 
+                      tidy.opts = list(width.cutoff = 60),
+                      fig.width = 8, 
+                      fig.height = 5, 
+                      dev = "png")
+```
+
+# Overview
+
+In this file, we demonstrate the relationship between missingness and intensity using a few public datasets on both precursor and protein levels. 
+
+# Load packages
+
+```{r}
+library(tidyverse)
+library(proteoDP)
+```
+
+# Dataset A: A DIA-NN subset of three
+
+## Data summary
+
+```{r}
+data("diannSubset")
+dim(diannSubset)
+diannSubset[1:5, ]
+```
+
+The overall proportion of missing data 
+
+```{r}
+sum(is.na(diannSubset)) / length(diannSubset)
+```
+
+## Empirical logistic splines for detected proportions
+
+```{r}
+nuis <- getNuisance(diannSubset)
+```
+
+Consider natural cubic splines generated with 1, 3 and 5 degrees of freedom:
+
+```{r}
+dfList <- seq(1, 5, 2)
+lineColours <- RColorBrewer::brewer.pal(4, "Dark2")
+```
+
+
+```{r}
+allFits <- list()
+for (df in dfList) {
+  params0 <- logitSplines_start(dp = nuis$dp, mu = nuis$mu_obs, wt = nuis$wt, df = df)
+  fit <- logit_ztbinom(dp = nuis$dp, X = params0$X, wt = nuis$wt, beta0 = params0$betas_start)
+  allFits[[(df+1)/2]] <- fit
+  if (df == 1)
+    plotEmpSplines(nuis, X = params0$X, fit$params, ylim = c(0, 1.04), 
+                   lineCol = lineColours[(df+1)/2], capped = FALSE)
+  if (df > 1)
+    plotEmpSplines(nuis, X = params0$X, fit$params, 
+                   plot.dotts = FALSE, ylim = c(0, 1.04), 
+                   lineCol = lineColours[(df+1)/2], capped = FALSE)
+}
+legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1)
+```
+
+
+
+## Reduced deviance compared to an intercept model
+
+Fit a baseline model, that is, the logistic regression fit where the detection probability is constant in all precursors.
+
+```{r, fig.width = 6, fig.height = 4}
+params0 <- logitSplines_start(dp = nuis$dp, mu = nuis$mu_obs, wt = nuis$wt, df = 0)
+baselineFit <- logit_ztbinom(dp = nuis$dp, X = params0$X, wt = nuis$wt, beta0 = params0$betas_start)
+baselineDev <- 2*min(baselineFit$info[, "neg.LL"])
+devs <- data.frame(df = c(0, dfList), 
+                   dev = c(baselineDev, sapply(allFits, function(i) 2*min(i$info[, "neg.LL"])))) %>% 
+  mutate(dev.decre = baselineDev - dev, 
+         percDevReduced = dev.decre / max(dev.decre))
+ggplot(slice(devs, 2:4), aes(x = df, y = percDevReduced)) + 
+  geom_point() + 
+  geom_line() +
+  geom_text(aes(label = signif(percDevReduced, 4)), vjust = -0.8) + 
+  scale_x_continuous(breaks = c(1, 3, 5)) +
+  labs(x = "DF", y = "Deviance% reduced") + 
+  theme_classic()
+```
+
+
+
+
+## Empirical logit-linear curve with capped probabilities
+
+```{r}
+params0 <- logitSplines_start(dp = nuis$dp, mu = nuis$mu_obs, wt = nuis$wt, df = 1)
+cappedLinear <- cappedLogit_ztbinom(dp = nuis$dp, X = params0$X, wt = nuis$wt, 
+                           alpha0 = 0.9, beta0 = params0$betas_start, trace = FALSE)
+cappedLinear$params
+plotEmpSplines(nuis, X = params0$X, cappedLinear$params, lineCol = lineColours[1])
+```
+
+## Detection probability curve assuming normal observed intensities
+
+```{r}
+dpcFit <- dpc(diannSubset, nuis)
+dpcFit$beta
+plotDPC(nuis, dpcFit, ylim = c(0, 1.04))
+```
+
+
+# Dataset B: diaPASEF
+
+Data downloaded from https://www.embopress.org/doi/full/10.15252/msb.202110798. The data are obtained by the diaPASEF pipeline and searched by DIA-NN. Sample size is 15; and the overall amount of missingness is moderate. Project accession: PXD024043 (www.ebi.ac.uk/pride/archive?keyword=PXD024043). (DIANN1.8_diaPASEF_1ng_repetitions.zip)
+
+
+## Data summary
+
+```{r}
+data("diapasef")
+dim(diapasef)
+diapasef[1:5, 1:5]
+```
+
+The overall proportion of missing data 
+
+```{r}
+sum(is.na(diapasef)) / length(diapasef)
+```
+
+## Empirical logistic splines for detected proportions
+
+```{r}
+diapasefRes <- gatherResults(diapasef)
+```
+
+```{r}
+for (i in 1:length(dfList)) {
+  if (i == 1)
+    plotEmpSplines(diapasefRes$nuis, X = diapasefRes$splineFits_params0[[i]]$X, 
+                   diapasefRes$splineFits[[i]]$params, point.cex = 0.1, 
+                   lineCol = lineColours[i], jitter.amount = 1/ncol(diapasef)/2,
+                   capped = FALSE)
+  if (i > 1)
+    plotEmpSplines(diapasefRes$nuis, X = diapasefRes$splineFits_params0[[i]]$X, 
+                   diapasefRes$splineFits[[i]]$params, 
+                   plot.dotts = FALSE, 
+                   lineCol = lineColours[i], capped = FALSE)
+}
+legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1)
+```
+
+## Reduced deviance compared to an intercept model
+
+```{r}
+diapasefRes$devPlot + 
+  ylim(0.95, 1)
+```
+
+
+## Empirical logit-linear curve with capped probabilities
+
+```{r}
+diapasefRes$cappedLinearFit$params
+plotEmpSplines(diapasefRes$nuis, X = diapasefRes$splineFits_params0[[1]]$X, 
+               diapasefRes$cappedLinearFit$params, lineCol = lineColours[1], 
+               jitter.amount = 1/ncol(diapasef)/2, 
+               point.cex = 0.1)
+```
+
+## Detection probability curve assuming normal observed intensities
+
+```{r}
+diapasefRes$dpcFit$beta
+plotDPC(diapasefRes$nuis, diapasefRes$dpcFit, jitter.amount = 1/ncol(diapasef)/2, point.cex = 0.1)
+```
+
+
+
+
+# Dataset C: A MaxDIA dataset
+
+## Data summary
+
+```{r}
+data("maxdia")
+dim(maxdia)
+maxdia[1:5, 1:5]
+```
+
+The overall proportion of missing data 
+
+```{r}
+sum(is.na(maxdia)) / length(maxdia)
+```
+
+## Empirical logistic splines for detected proportions
+
+```{r}
+maxdiaRes <- gatherResults(maxdia)
+```
+
+```{r}
+for (i in 1:length(dfList)) {
+  if (i == 1)
+    plotEmpSplines(maxdiaRes$nuis, X = maxdiaRes$splineFits_params0[[i]]$X, 
+                   maxdiaRes$splineFits[[i]]$params, point.cex = 0.1, 
+                   lineCol = lineColours[i], jitter.amount = 1/ncol(maxdia)/2,
+                   capped = FALSE)
+  if (i > 1)
+    plotEmpSplines(maxdiaRes$nuis, X = maxdiaRes$splineFits_params0[[i]]$X, 
+                   maxdiaRes$splineFits[[i]]$params, 
+                   plot.dotts = FALSE, 
+                   lineCol = lineColours[i], capped = FALSE)
+}
+legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1)
+```
+
+## Reduced deviance compared to an intercept model
+
+```{r}
+maxdiaRes$devPlot + 
+  ylim(0.95, 1)
+```
+
+
+## Empirical logit-linear curve with capped probabilities
+
+```{r}
+maxdiaRes$cappedLinearFit$params
+plotEmpSplines(maxdiaRes$nuis, X = maxdiaRes$splineFits_params0[[1]]$X, 
+               maxdiaRes$cappedLinearFit$params, lineCol = lineColours[1], 
+               jitter.amount = 1/ncol(maxdia)/2, 
+               point.cex = 0.1)
+```
+
+## Detection probability curve assuming normal observed intensities
+
+```{r}
+maxdiaRes$dpcFit$beta
+plotDPC(maxdiaRes$nuis, maxdiaRes$dpcFit, jitter.amount = 1/ncol(maxdia)/2, point.cex = 0.1)
+```
+
+
+
+
+# Dataset D: DDA plasma data
+
+The paper is available at https://www.mcponline.org/article/S1535-9476(20)34998-7/fulltext#seccestitle170 by the MaxQuant group. Use the peptides.txt output from MaxQuant. This is a blood plasma sample so heaps of missing values. The dataset identifier is PXD014777.
+
+## Data summary
+
+```{r}
+data("ddaPlasma")
+dim(ddaPlasma)
+ddaPlasma[1:5, 1:5]
+```
+
+The overall proportion of missing data 
+
+```{r}
+sum(is.na(ddaPlasma)) / length(ddaPlasma)
+```
+
+## Empirical logistic splines for detected proportions
+
+```{r}
+ddaPlasmaRes <- gatherResults(ddaPlasma)
+```
+
+```{r}
+for (i in 1:length(dfList)) {
+  if (i == 1)
+    plotEmpSplines(ddaPlasmaRes$nuis, X = ddaPlasmaRes$splineFits_params0[[i]]$X, 
+                   ddaPlasmaRes$splineFits[[i]]$params, 
+                   lineCol = lineColours[i], add.jitter = FALSE, 
+                   capped = FALSE)
+  if (i > 1)
+    plotEmpSplines(ddaPlasmaRes$nuis, X = ddaPlasmaRes$splineFits_params0[[i]]$X, 
+                   ddaPlasmaRes$splineFits[[i]]$params, 
+                   plot.dotts = FALSE, 
+                   lineCol = lineColours[i], capped = FALSE)
+}
+legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1)
+```
+
+## Reduced deviance compared to an intercept model
+
+```{r}
+ddaPlasmaRes$devPlot + 
+  ylim(0.95, 1)
+```
+
+
+## Empirical logit-linear curve with capped probabilities
+
+```{r}
+ddaPlasmaRes$cappedLinearFit$params
+plotEmpSplines(ddaPlasmaRes$nuis, X = ddaPlasmaRes$splineFits_params0[[1]]$X, 
+               ddaPlasmaRes$cappedLinearFit$params, 
+               lineCol = lineColours[1], 
+               add.jitter = FALSE)
+```
+
+## Detection probability curve assuming normal observed intensities
+
+```{r}
+ddaPlasmaRes$dpcFit$beta
+plotDPC(ddaPlasmaRes$nuis, ddaPlasmaRes$dpcFit, add.jitter = FALSE)
+```
+
+
+
+
+
+
+# References
+
+- Demichev, V., Messner, C.B., Vernardis, S.I., Lilley, K.S. and Ralser, M., 2020. DIA-NN: neural networks and interference correction enable deep proteome coverage in high throughput. *Nature methods*, 17(1), pp.41-44.
+
+- Brunner, A.D., Thielert, M., Vasilopoulou, C., Ammar, C., Coscia, F., Mund, A., Hoerning, O.B., Bache, N., Apalategui, A., Lubeck, M. and Richter, S., 2022. Ultra‐high sensitivity mass spectrometry quantifies single‐cell proteome changes upon perturbation. *Molecular systems biology*, 18(3), p.e10798.
+
+- Sinitcyn, P., Hamzeiy, H., Salinas Soto, F., Itzhak, D., McCarthy, F., Wichmann, C., Steger, M., Ohmayer, U., Distler, U., Kaspar-Schoenefeld, S. and Prianichnikov, N., 2021. MaxDIA enables library-based and library-free data-independent acquisition proteomics. *Nature biotechnology*, 39(12), pp.1563-1573.
+
+- Prianichnikov, N., Koch, H., Koch, S., Lubeck, M., Heilig, R., Brehmer, S., Fischer, R. and Cox, J., 2020. MaxQuant software for ion mobility enhanced shotgun proteomics. *Molecular & Cellular Proteomics*, 19(6), pp.1058-1069.
+
+
+
+# Session information
+
+```{r}
+sessionInfo()
+```
+
