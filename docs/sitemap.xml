@@ -10,7 +10,7 @@
     <loc>/articles/index.html</loc>
   </url>
   <url>
-    <loc>/articles/proteoDP.html</loc>
+    <loc>/articles/protDP.html</loc>
   </url>
   <url>
     <loc>/articles/supp.html</loc>
@@ -46,19 +46,10 @@
     <loc>/reference/heart.html</loc>
   </url>
   <url>
-    <loc>/reference/hello.html</loc>
-  </url>
-  <url>
-    <loc>/reference/iBeta.html</loc>
-  </url>
-  <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
     <loc>/reference/logitSplines_start.html</loc>
-  </url>
-  <url>
-    <loc>/reference/logit_ztbinom.ZT_negLL.html</loc>
   </url>
   <url>
     <loc>/reference/logit_ztbinom.html</loc>

@@ -6,7 +6,6 @@ author:
 output:
   BiocStyle::html_document:
     toc_float: true
-package: BiocStyle
 vignette: >
   %\VignetteIndexEntry{Main results and figures}
   %\VignetteEngine{knitr::rmarkdown}
@@ -176,7 +175,7 @@ legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 
 
 ## Reduced deviance compared to an intercept model
 
-```{r}
+```{r, fig.width = 6, fig.height = 4}
 diapasefRes$devPlot + 
   ylim(0.95, 1)
 ```
@@ -242,7 +241,7 @@ legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 
 
 ## Reduced deviance compared to an intercept model
 
-```{r}
+```{r, fig.width = 6, fig.height = 4}
 maxdiaRes$devPlot + 
   ylim(0.95, 1)
 ```
@@ -310,7 +309,7 @@ legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 
 
 ## Reduced deviance compared to an intercept model
 
-```{r}
+```{r, fig.width = 6, fig.height = 4}
 ddaPlasmaRes$devPlot + 
   ylim(0.95, 1)
 ```

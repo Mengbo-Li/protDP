@@ -2,7 +2,7 @@ pandoc: 2.17.1.1
 pkgdown: 2.0.3
 pkgdown_sha: ~
 articles:
-  proteoDP: proteoDP.html
+  protDP: protDP.html
   supp: supp.html
-last_built: 2022-05-16T11:04Z
+last_built: 2022-05-17T00:14Z
 

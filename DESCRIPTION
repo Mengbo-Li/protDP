@@ -1,4 +1,4 @@
-Package: proteoDP
+Package: protDP
 Type: Package
 Title: Estimation of the Detection Probability Curve in MS-based Proteomics Data
 Version: 0.1.0
