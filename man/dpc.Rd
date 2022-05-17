@@ -5,16 +5,7 @@
 \title{Detection probability curve for mass spectrometry-based proteomics data
 assuming observed normal intensities}
 \usage{
-dpc(
-  Y,
-  nuis,
-  maxit = 100,
-  eps = 1e-04,
-  b1.upper = 1,
-  capped = FALSE,
-  alpha0 = NA,
-  trace = TRUE
-)
+dpc(Y, nuis, maxit = 100, eps = 1e-04, b1.upper = 1)
 }
 \arguments{
 \item{Y}{The log2-transformed intensity matrix where rows are precursors and
@@ -27,12 +18,6 @@ columns are samples.}
 \item{eps}{Convergence tolerance.}
 
 \item{b1.upper}{Upper bound for beta_1. Typically 1.}
-
-\item{capped}{Logical. Whether to fit a capped logit-linear model.}
-
-\item{alpha0}{A start value for alpha if capped is TRUE.}
-
-\item{trace}{Logical. Whether to print out alpha estimates at each iteration.}
 }
 \value{
 Fitted parameters and the fitting history.

@@ -16,3 +16,7 @@ List of results including
 \description{
 Wrapper function of all presented results
 }
+\examples{
+## See the vignettes.
+
+}

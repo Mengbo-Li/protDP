@@ -4,9 +4,11 @@
 #' columns are samples.
 #'
 #' @return List of results including
-#' @export
 #'
 #' @examples
+#' ## See the vignettes.
+#'
+#' @export
 gatherResults <- function(data) {
   nuis <- getNuisance(data)
   # first get all logistic-splines fits
