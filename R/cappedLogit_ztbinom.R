@@ -32,31 +32,45 @@ cappedLogit_ztbinom <- function(dp, X, wt, alpha0 = 0.8, beta0, maxit = 100,
                       method = "L-BFGS-B",
                       lower = lower.bounds, upper = upper.bounds)
   betas <- ztbinomFit$par
-  betas.hist <- betas
+  betas.hist <- matrix(betas, nrow = 1)
   negLL <- cappedZT_negLL_givenAlpha(betas, dp, wt, X, alpha)
   negLL.hist <- negLL
 
   for (i in 1:maxit) {
-    # given MLE of the betas, re-estimate alpha
-    if (df > 0) eta <- colSums(t(cbind(1, X)) * betas)
-    if (df == 0) eta <- colSums(t(X) * betas)
+    if (df > 0)
+      eta <- colSums(t(cbind(1, X)) * betas)
+    if (df == 0)
+      eta <- colSums(t(X) * betas)
     p <- plogis(eta)
     mu <- alpha * p
-    newAlpha <- sum(wt*dp/(1-mu)) / sum(wt*p/(1-mu) +
-                                          p*(1-mu)^(wt-1)/iBeta(mu, 1, wt))
+    newAlpha <- sum(wt * dp/(1 - mu))/sum(wt * p/(1 - mu) +
+                                            p * (1 - mu)^(wt - 1)/iBeta(mu, 1, wt))
     if (newAlpha >= 1) {
       alpha <- 1
+      if (trace)
+        cat(paste("alpha_", i, sep = ""), "=", alpha, "\n")
+      ztbinomFit <- optim(betas, cappedZT_negLL_givenAlpha,
+                          dp = dp, wt = wt, X = X, alpha = alpha, method = "L-BFGS-B",
+                          lower = lower.bounds, upper = upper.bounds)
+      newBetas <- ztbinomFit$par
+      newNegLL <- cappedZT_negLL_givenAlpha(newBetas, dp, wt, X, alpha)
+      alpha.hist <- c(alpha.hist, alpha)
+      betas.hist <- rbind(betas.hist, newBetas)
+      negLL.hist <- c(negLL.hist, newNegLL)
+      betas <- newBetas
       break
     }
-    if (abs(newAlpha - alpha) < eps) break
-    if (trace) cat(paste("alpha_", i, sep = ""), "=", newAlpha, "\n")
-    # re-estimate MLE for betas with the new alpha
+    if (abs(newAlpha - alpha) < eps)
+      break
+    if (trace)
+      cat(paste("alpha_", i, sep = ""), "=", newAlpha,
+          "\n")
     ztbinomFit <- optim(betas, cappedZT_negLL_givenAlpha,
-                        dp = dp, wt = wt, X = X, alpha = newAlpha,
-                        method = "L-BFGS-B",
+                        dp = dp, wt = wt, X = X, alpha = newAlpha, method = "L-BFGS-B",
                         lower = lower.bounds, upper = upper.bounds)
     newBetas <- ztbinomFit$par
-    newNegLL <- cappedZT_negLL_givenAlpha(newBetas, dp, wt, X, newAlpha)
+    newNegLL <- cappedZT_negLL_givenAlpha(newBetas, dp,
+                                          wt, X, newAlpha)
     alpha.hist <- c(alpha.hist, newAlpha)
     betas.hist <- rbind(betas.hist, newBetas)
     negLL.hist <- c(negLL.hist, newNegLL)

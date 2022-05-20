@@ -37,7 +37,7 @@ In this file, we demonstrate the relationship between missingness and intensity 
 
 ```{r}
 library(tidyverse)
-library(proteoDP)
+library(protDP)
 ```
 
 # Dataset A: A DIA-NN subset of three

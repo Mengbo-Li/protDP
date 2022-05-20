@@ -34,7 +34,7 @@ axis.}
 \item{capped}{Logical. Whether the probabilities are capped by alpha.}
 }
 \value{
-
+The plot.
 }
 \description{
 Plot the detection probability curve

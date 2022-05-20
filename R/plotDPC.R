@@ -10,7 +10,7 @@
 #' @param ylim Limits of the y-axis.
 #' @param capped Logical. Whether the probabilities are capped by alpha.
 #'
-#' @return
+#' @return The plot.
 #' @export
 #'
 #' @examples

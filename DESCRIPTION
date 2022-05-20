@@ -2,7 +2,7 @@ Package: protDP
 Type: Package
 Title: Estimation of the Detection Probability Curve in MS-based Proteomics Data
 Version: 0.1.0
-Authors@R:  
+Authors@R: 
     c(person("Mengbo", "Li", 
             email = "mengboli103@gmail.com", 
             role = c("aut", "cre")))
@@ -16,4 +16,4 @@ Imports: stats, limma, splines
 Suggests: knitr, tidyverse, markdown
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
