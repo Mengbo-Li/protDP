@@ -80,10 +80,11 @@ cappedLogit_ztbinom <- function(dp, X, wt, alpha0 = 0.8, beta0, maxit = 100,
 
   # clean up results
   info <- cbind(alpha.hist, betas.hist, negLL.hist)
-  colnames(info) <- c("alpha", "b0", "b1", "neg.ZBLL")
+  if (!is.null(names(beta0))) colnames(info) <- c("alpha", names(beta0), "neg.ZBLL")
+  else colnames(info) <- c("alpha", "b0", "b1", "neg.ZBLL")
   rownames(info) <- paste("i=", 0:(nrow(info)-1), sep = "")
   final.params <- c(alpha, betas)
-  names(final.params) <- c("alpha", "b0", "b1")
+  names(final.params) <- colnames(info)[-ncol(info)]
 
   list(params = final.params, info = info)
 }
