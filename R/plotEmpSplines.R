@@ -1,4 +1,5 @@
-#' Plot a fitted empirical spline fit on detected proportions
+#' Plot the fitted empirical spline of detected proportions to average observed
+#' intensities
 #'
 #' @param nuis The list of nuisance parameters.
 #' @param X The basis matrix for the natural cubic spline.
@@ -34,7 +35,7 @@ plotEmpSplines <- function(nuis, X, params,
     if (plot.dotts)
       plot(x = x, y = y,
            pch = 16, cex = point.cex, ylim = ylim,
-           xlab = expression(mu[obs]), ylab = "Detection proportion",
+           xlab = "Average observed intensity", ylab = "Detection proportion",
            main = "Empirical splines")
     X <- cbind(1, X)
     if (capped) {
@@ -54,7 +55,7 @@ plotEmpSplines <- function(nuis, X, params,
     if (plot.dotts)
       plot(x = x, y = y.logit,
            pch = 16, cex = point.cex, ylim = ylim,
-           xlab = expression(mu[obs]), ylab = "logit(detected proportion)",
+           xlab = "Average observed intensity", ylab = "logit(detected proportion)",
            main = "Empirical splines: Logit scale")
     X <- cbind(1, X)
     if (capped) {
@@ -70,7 +71,7 @@ plotEmpSplines <- function(nuis, X, params,
     fitte.eta <- qlogis(fitte.dp)
     if (lineOnly) plot(x[order(x)], fitte.eta[order(x)], col = lineCol, lwd = lwd, type = "l",
                        ylim = ylim, lty = lty,
-                       xlab = expression(mu[obs]), ylab = "logit(detected proportion)",
+                       xlab = "Average observed intensity", ylab = "logit(detected proportion)",
                        main = "Empirical splines: Logit scale")
     else lines(x[order(x)], fitte.eta[order(x)], col = lineCol, lwd = lwd, lty = lty)
   }

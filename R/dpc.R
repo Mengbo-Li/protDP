@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' ## See the vignettes.
-dpc <- function(Y, nuis, maxit = 100, eps = 1e-4, b1.upper = 1) {
+dpc <- function(Y, nuis, maxit = 100, eps = 1e-4, b1.upper = 1, b0.upper = 0) {
   dp <- nuis$dp
   wt <- nuis$wt
   s2 <- nuis$s2
@@ -28,7 +28,7 @@ dpc <- function(Y, nuis, maxit = 100, eps = 1e-4, b1.upper = 1) {
                         dp = dp, wt = wt,
                         mu_obs = mu_obs, mu_mis = mu_mis,
                         method = "L-BFGS-B", lower = c(-Inf, 0),
-                        upper = c(0, b1.upper))
+                        upper = c(b0.upper, b1.upper))
     newBetas <- ztbinomFit$par
     mu_mis <- mu_obs - newBetas[2]*s2
     newNegLL <- dpc_ztbinom.negLL(newBetas, dp, wt, mu_obs, mu_mis)

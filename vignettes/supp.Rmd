@@ -7,6 +7,9 @@ output:
   BiocStyle::html_document:
     toc_float: true
 package: BiocStyle
+bibliography: protDP.bib
+editor_options: 
+  chunk_output_type: console
 ---
 
 
@@ -30,97 +33,610 @@ knitr::opts_chunk$set(collapse = TRUE,
 
 # Overview
 
+On this page, the analysis workflow presented in the main text is applied on each of the four example datasets on the protein group level. Additionally, two more datasets were downloaded and the same analysis are performed on both precursor- and protein-levels. 
 
 # Load packages
 
 ```{r}
 library(tidyverse)
 library(protDP)
-```
-
-Consider natural cubic splines generated with 1, 3 and 5 degrees of freedom:
-
-```{r}
 dfList <- seq(1, 5, 2)
 lineColours <- RColorBrewer::brewer.pal(4, "Dark2")
 ```
 
 
-# Dataset S1: Sydney heart bank data
+# Dataset A: Hybrid proteome data
 
-This dataset is acquired by DIA and processed with Spectronaut with a spectral library generated from pooled DDA samples. 
+LFQ intensities summarised by MaxLFQ [@cox2014accurate] were extracted from the DIA-NN [@demichev2020dia] output on the protein group level. The log2-transformation is applied to LFQ intensities.  
 
-## Data summary
-
-```{r}
-data("heart")
-dim(heart)
-heart[1:5, 1:5]
-```
-
-The overall proportion of missing data 
+## Data overview
 
 ```{r}
-sum(is.na(heart)) / length(heart)
+data("datasetA")
+dat <- log2(datasetA$prot)
+dim(dat)
 ```
+
+The overall proportion of missing data on the protein level is equal to
+
+```{r}
+sum(is.na(dat)) / length(dat)
+```
+
 
 ## Empirical logistic splines for detected proportions
 
 ```{r}
-heartRes <- gatherResults(heart)
-```
-
-```{r}
+hyeProt <- gatherResults(dat)
 for (i in 1:length(dfList)) {
   if (i == 1)
-    plotEmpSplines(heartRes$nuis, X = heartRes$splineFits_params0[[i]]$X, 
-                   heartRes$splineFits[[i]]$params, 
+    plotEmpSplines(hyeProt$nuis, X = hyeProt$splineFits_params0[[i]]$X, 
+                   hyeProt$splineFits[[i]]$params, 
                    lineCol = lineColours[i], 
-                   jitter.amount = 1/ncol(heart)/2, point.cex = 0.1, 
-                   capped = FALSE)
+                   jitter.amount = NULL, point.cex = 0.15, 
+                   capped = FALSE, ylim = c(0, 1.04))
   if (i > 1)
-    plotEmpSplines(heartRes$nuis, X = heartRes$splineFits_params0[[i]]$X, 
-                   heartRes$splineFits[[i]]$params, 
+    plotEmpSplines(hyeProt$nuis, X = hyeProt$splineFits_params0[[i]]$X, 
+                   hyeProt$splineFits[[i]]$params, 
                    plot.dotts = FALSE, 
                    lineCol = lineColours[i], capped = FALSE)
 }
-legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1)
+legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
 ```
 
 ## Reduced deviance compared to an intercept model
 
 ```{r, fig.width = 6, fig.height = 4}
-heartRes$devPlot + 
-  ylim(0.95, 1)
+hyeProt$devPlot + 
+  ylim(0.90, 1)
 ```
 
 
 ## Empirical logit-linear curve with capped probabilities
 
 ```{r}
-heartRes$cappedLinearFit$params
-plotEmpSplines(heartRes$nuis, X = heartRes$splineFits_params0[[1]]$X, 
-               heartRes$cappedLinearFit$params, 
-               lineCol = lineColours[1], 
-               jitter.amount = 1/ncol(heart)/2, point.cex = 0.1)
+plotEmpSplines(hyeProt$nuis, X = hyeProt$splineFits_params0[[1]]$X, 
+               hyeProt$cappedLinearFit$params, 
+               lineCol = lineColours[1], ylim = c(0, 1.04), 
+               jitter.amount = NULL, point.cex = 0.15)
 ```
+
+The estimated paramters are
+
+```{r}
+round(hyeProt$cappedLinearFit$params, 2)
+```
+
+We see that the estimated $\alpha$ value is 1, suggesting no MCAR exists in data. 
+
 
 ## Detection probability curve assuming normal observed intensities
 
 ```{r}
-heartRes$dpcFit$beta
-plotDPC(heartRes$nuis, heartRes$dpcFit, jitter.amount = 1/ncol(heart)/2, point.cex = 0.1)
+plotDPC(hyeProt$nuis, hyeProt$dpcFit, jitter.amount = NULL, point.cex = 0.15, ylim = c(0, 1.04))
+```
+
+The estimated parameters for the detection probability curve are
+
+```{r}
+round(hyeProt$dpcFit$beta, 2)
+```
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+# Dataset B: Cell cycle proteomes
+
+LFQ intensities summarised by MaxLFQ [@cox2014accurate] were extracted from the DIA-NN [@demichev2020dia] report for protein groups. The log2-transformation is first applied to LFQ intensities. 
+
+## Data overview
+
+```{r}
+data("datasetB")
+dat <- log2(datasetB$prot)
+dim(dat)
+```
+
+The overall proportion of missing data on the protein-level is
+
+```{r}
+sum(is.na(dat)) / length(dat)
+```
+
+## Empirical logistic splines for detected proportions
+
+```{r}
+scProt <- gatherResults(dat)
+for (i in 1:length(dfList)) {
+  if (i == 1)
+    plotEmpSplines(scProt$nuis, X = scProt$splineFits_params0[[i]]$X, 
+                   scProt$splineFits[[i]]$params, 
+                   lineCol = lineColours[i], 
+                   add.jitter = FALSE, point.cex = 0.15, 
+                   capped = FALSE)
+  if (i > 1)
+    plotEmpSplines(scProt$nuis, X = scProt$splineFits_params0[[i]]$X, 
+                   scProt$splineFits[[i]]$params, 
+                   plot.dotts = FALSE, 
+                   lineCol = lineColours[i], capped = FALSE)
+}
+legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
+```
+
+## Reduced deviance compared to an intercept model
+
+```{r, fig.width = 6, fig.height = 4}
+scProt$devPlot + ylim(0.90, 1)
+```
+
+
+## Empirical logit-linear curve with capped probabilities
+
+```{r}
+plotEmpSplines(scProt$nuis, X = scProt$splineFits_params0[[1]]$X, 
+               scProt$cappedLinearFit$params, 
+               lineCol = lineColours[1], 
+               add.jitter = FALSE, point.cex = 0.15)
+```
+
+Estimated parameters are 
+
+```{r}
+round(scProt$cappedLinearFit$params, 2)
+```
+
+
+## Detection probability curve assuming normal observed intensities
+
+```{r}
+scProt_dpcFit <- dpc(diannSubset, nuis = scProt$nuis, b1.upper = Inf)
+plotDPC(scProt$nuis, scProt_dpcFit, add.jitter = FALSE, point.cex = 0.15)
+```
+
+Parameters of the detection probability curve are as follows: 
+
+```{r}
+round(scProt_dpcFit$beta, 2)
 ```
 
 
 
+<br>
+<br>
+<br>
+<br>
+
+
+# Dataset C: HepG2 technical replicate data
+
+For the protein group level analysis, we use the `proteinGroups.txt` file from the MaxQuant output. The LFQ intensities are first log2-transformed. 
+
+## Data overview
+
+```{r}
+data("datasetC")
+dat <- log2(datasetC$prot)
+dim(dat)
+```
+
+The overall proportion of missingness in protein group level data is
+
+```{r}
+sum(is.na(dat)) / length(dat)
+```
+
+## Empirical logistic splines for detected proportions
+
+```{r}
+hepg2Prot <- gatherResults(dat)
+for (i in 1:length(dfList)) {
+  if (i == 1)
+    plotEmpSplines(hepg2Prot$nuis, X = hepg2Prot$splineFits_params0[[i]]$X, 
+                   hepg2Prot$splineFits[[i]]$params, 
+                   lineCol = lineColours[i], 
+                   jitter.amount = 1/ncol(dat)/2, point.cex = 0.2, 
+                   capped = FALSE)
+  if (i > 1)
+    plotEmpSplines(hepg2Prot$nuis, X = hepg2Prot$splineFits_params0[[i]]$X, 
+                   hepg2Prot$splineFits[[i]]$params, 
+                   plot.dotts = FALSE, 
+                   lineCol = lineColours[i], capped = FALSE)
+}
+legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
+```
+
+## Reduced deviance compared to an intercept model
+
+```{r, fig.width = 6, fig.height = 4}
+hepg2Prot$devPlot + ylim(0.90, 1)
+```
+
+
+## Empirical logit-linear curve with capped probabilities
+
+```{r}
+plotEmpSplines(hepg2Prot$nuis, X = hepg2Prot$splineFits_params0[[1]]$X, 
+               hepg2Prot$cappedLinearFit$params, 
+               lineCol = lineColours[1], 
+               jitter.amount = 1/ncol(dat)/2, point.cex = 0.2)
+```
+
+The estimated parameters are 
+
+```{r}
+round(hepg2Prot$cappedLinearFit$params, 2)
+```
+
+
+## Detection probability curve assuming normal observed intensities
+
+```{r}
+plotDPC(hepg2Prot$nuis, hepg2Prot$dpcFit, jitter.amount = 1/ncol(dat)/2, point.cex = 0.2)
+```
+
+Parameters of the detection probability curve are 
+
+```{r}
+round(hepg2Prot$dpcFit$beta, 2)
+```
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+
+# Dataset D: Human blood plasma proteome
+
+For the protein group level analysis, we use the `proteinGroups.txt` file from the MaxQuant output downloaded from the ProteomeXchange Consortium via the PRIDE partner repository with the dataset identifier PXD014777. 
+
+## Data overview
+
+```{r}
+data("datasetD")
+dat <- log2(datasetD$prot)
+dim(dat)
+```
+
+The overall proportion of missing data in the protein group level data is
+
+```{r}
+sum(is.na(dat)) / length(dat)
+```
+
+## Empirical logistic splines for detected proportions
+
+```{r}
+ddaPlasmaProt <- gatherResults(dat)
+for (i in 1:length(dfList)) {
+  if (i == 1)
+    plotEmpSplines(ddaPlasmaProt$nuis, X = ddaPlasmaProt$splineFits_params0[[i]]$X, 
+                   ddaPlasmaProt$splineFits[[i]]$params, 
+                   lineCol = lineColours[i], 
+                   add.jitter = FALSE, point.cex = 0.2, 
+                   capped = FALSE)
+  if (i > 1)
+    plotEmpSplines(ddaPlasmaProt$nuis, X = ddaPlasmaProt$splineFits_params0[[i]]$X, 
+                   ddaPlasmaProt$splineFits[[i]]$params, 
+                   plot.dotts = FALSE, 
+                   lineCol = lineColours[i], capped = FALSE)
+}
+legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
+```
+
+## Reduced deviance compared to an intercept model
+
+```{r, fig.width = 6, fig.height = 4}
+ddaPlasmaProt$devPlot + ylim(0.90, 1)
+```
+
+
+## Empirical logit-linear curve with capped probabilities
+
+```{r}
+plotEmpSplines(ddaPlasmaProt$nuis, X = ddaPlasmaProt$splineFits_params0[[1]]$X, 
+               ddaPlasmaProt$cappedLinearFit$params, 
+               lineCol = lineColours[1], 
+               add.jitter = FALSE, point.cex = 0.2)
+```
+
+Estimated parameters are
+
+```{r}
+round(ddaPlasmaProt$cappedLinearFit$params, 2)
+```
+
+
+## Detection probability curve assuming normal observed intensities
+
+```{r}
+plotDPC(ddaPlasmaProt$nuis, ddaPlasmaProt$dpcFit, add.jitter = FALSE, point.cex = 0.2)
+```
+
+Parameters for the fitted detection probability curve are
+
+```{r}
+round(ddaPlasmaProt$dpcFit$beta, 2)
+```
+
+
+
+<br>
+<br>
+<br>
+<br>
+
+# Supplmentary dataset: Sydney heart bank data
+
+Cryopreserved left ventricular myocardium samples from the human hearts were analysed. MS data were acquired in DIA mode and analysed by Spectronaunt v12 with a DDA spectral library generated from the pooled sample [@li2020core]. Details on sample preparation, LC-MS/MS workflow and data processing steps including the generation of the spectial library can be found in @li2020core. Here we consider the healthy donor heart samples. Both precursor- and protein group-level data are log2-transformed before analysis. 
+
+## Data summary
+
+```{r}
+data("shbheart")
+shbheart_prec <- log2(shbheart$prec)
+dim(shbheart_prec)
+shbheart_prot <- log2(shbheart$prot)
+dim(shbheart_prot)
+```
+
+The overall proportion of missing data on the precursor-level is
+
+```{r}
+sum(is.na(shbheart_prec)) / length(shbheart_prec)
+```
+
+While the overall proportion of missingness on the protein group-level is 
+
+```{r}
+sum(is.na(shbheart_prot)) / length(shbheart_prot)
+```
+
+
+## Empirical logistic splines for detected proportions
+
+The analysis workflow presented in the manuscript is applied on the dataset on both precursor- and protein group-level data:
+
+```{r}
+res <- list(prec = gatherResults(shbheart_prec), prot = gatherResults(shbheart_prot))
+```
+
+```{r, fig.width = 8, fig.height = 10}
+par(mfrow = c(2, 1))
+for (res_i in 1:2) {
+  eachRes <- res[[res_i]]
+  for (i in 1:length(dfList)) {
+  if (i == 1)
+    plotEmpSplines(eachRes$nuis, X = eachRes$splineFits_params0[[i]]$X, 
+                   eachRes$splineFits[[i]]$params, lineCol = lineColours[i], 
+                   jitter.amount = 1/ncol(shbheart_prec)/2, point.cex = 0.15, 
+                   capped = FALSE)
+  if (i > 1)
+    plotEmpSplines(eachRes$nuis, X = eachRes$splineFits_params0[[i]]$X, 
+                   eachRes$splineFits[[i]]$params, 
+                   plot.dotts = FALSE, lineCol = lineColours[i], capped = FALSE)
+  }
+  title(sub = c("Precursor-level", "Protein-level")[res_i])
+  legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
+}
+```
+
+## Reduced deviance compared to an intercept model
+
+```{r, fig.width = 12, fig.height = 4}
+devPlot1 <- res[[1]]$devPlot + 
+  ylim(0.90, 1) + ggtitle("Precursor-level")
+devPlot2 <- res[[2]]$devPlot + 
+  ylim(0.90, 1) + ggtitle("Protein-level")
+gridExtra::grid.arrange(devPlot1, devPlot2, ncol = 2)
+```
+
+
+## Empirical logit-linear curve with capped probabilities
+
+```{r, fig.width = 8, fig.height = 10}
+par(mfrow = c(2, 1))
+for (res_i in 1:2) {
+  eachRes <- res[[res_i]]
+  plotEmpSplines(eachRes$nuis, X = eachRes$splineFits_params0[[1]]$X, 
+                 eachRes$cappedLinearFit$params, 
+                 lineCol = lineColours[1], 
+                 jitter.amount = 1/ncol(shbheart_prec)/2, point.cex = 0.15)
+  title(sub = c("Precursor-level", "Protein-level")[res_i])
+}
+```
+
+With estimated parameters on precursor-level data being:
+
+```{r}
+round(res[["prec"]]$cappedLinearFit$params, 2)
+```
+
+and estimated parameters on protein-level data being:
+
+```{r}
+round(res[["prot"]]$cappedLinearFit$params, 2)
+```
+
+Estimated $\alpha$ values are equal to 1 on both precursor- and protein group-level data. 
+
+
+
+## Detection probability curve assuming normal observed intensities
+
+```{r, fig.width = 8, fig.height = 10}
+par(mfrow = c(2, 1))
+for (res_i in 1:2) {
+  eachRes <- res[[res_i]]
+  plotDPC(eachRes$nuis, eachRes$dpcFit, jitter.amount = 1/ncol(shbheart_prec)/2, point.cex = 0.15)
+  title(sub = c("Precursor-level", "Protein-level")[res_i])
+}
+```
+
+With estimated parameters on precursor-level data being:
+
+```{r}
+round(res[["prec"]]$dpcFit$beta, 2)
+```
+
+and estimated parameters on protein-level data being:
+
+```{r}
+round(res[["prot"]]$dpcFit$beta, 2)
+```
+
+<br>
+<br>
+<br>
+<br>
+
+
+
+# Supplmentary dataset: UPS1 spiked in yeast extract
+
+Three concentrations of UPS1 (25 fmol, 10 fmol and 5 fmol) were spiked in yeast extract [@giai2016calibration]. This is a DDA dataset and MS raw data were processed by MaxQuant. Here we look at the dataset which compares 25 fmol to 10 fmol spiked-ins. Processed data were downloaded from ProteomeXchange Consortium via the PRIDE partner repository with the dataset identifier PXD002370. For peptide-level data, we use the `peptides.txt` file and for the protein-level analysis, we use the `proteinGroups.txt` file from the MaxQuant output. Log2-transformation is first applied before analysis. 
+
+## Data summary
+
+```{r}
+data("ratio2.5")
+usp1_prec <- log2(ratio2.5$prec)
+dim(usp1_prec)
+usp1_prot <- log2(ratio2.5$prot)
+dim(usp1_prot)
+```
+
+The overall proportion of missing data for the precursor-level data is 
+
+```{r}
+sum(is.na(usp1_prec)) / length(usp1_prec)
+```
+
+The overall proportion of missing data for the protein-level data is 
+
+```{r}
+sum(is.na(usp1_prot)) / length(usp1_prot)
+```
+
+
+## Empirical logistic splines for detected proportions
+
+```{r}
+res <- list(prec = gatherResults(usp1_prec), prot = gatherResults(usp1_prot))
+```
+
+```{r, fig.width = 8, fig.height = 10}
+par(mfrow = c(2, 1))
+for (res_i in 1:2) {
+  eachRes <- res[[res_i]]
+  for (i in 1:length(dfList)) {
+  if (i == 1)
+    plotEmpSplines(eachRes$nuis, X = eachRes$splineFits_params0[[i]]$X, 
+                   eachRes$splineFits[[i]]$params, lineCol = lineColours[i], 
+                   jitter.amount = 1/ncol(usp1_prec)/2, point.cex = 0.15, 
+                   capped = FALSE, ylim = c(0, 1.08))
+  if (i > 1)
+    plotEmpSplines(eachRes$nuis, X = eachRes$splineFits_params0[[i]]$X, 
+                   eachRes$splineFits[[i]]$params, 
+                   plot.dotts = FALSE, lineCol = lineColours[i], capped = FALSE)
+  }
+  title(sub = c("Precursor-level", "Protein-level")[res_i])
+  legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
+}
+```
+
+## Reduced deviance compared to an intercept model
+
+```{r, fig.width = 12, fig.height = 4}
+devPlot1 <- res[[1]]$devPlot + 
+  ylim(0.90, 1) + ggtitle("Precursor-level")
+devPlot2 <- res[[2]]$devPlot + 
+  ylim(0.90, 1) + ggtitle("Protein-level")
+gridExtra::grid.arrange(devPlot1, devPlot2, ncol = 2)
+```
+
+
+## Empirical logit-linear curve with capped probabilities
+
+```{r, fig.width = 8, fig.height = 10}
+par(mfrow = c(2, 1))
+for (res_i in 1:2) {
+  eachRes <- res[[res_i]]
+  plotEmpSplines(eachRes$nuis, X = eachRes$splineFits_params0[[1]]$X, 
+                 eachRes$cappedLinearFit$params, 
+                 lineCol = lineColours[1], 
+                 jitter.amount = 1/ncol(usp1_prec)/2, point.cex = 0.15, 
+                 ylim = c(0, 1.08))
+  title(sub = c("Precursor-level", "Protein-level")[res_i])
+}
+```
+
+With estimated parameters on precursor-level data being:
+
+```{r}
+round(res[["prec"]]$cappedLinearFit$params, 2)
+```
+
+and estimated parameters on protein-level data being:
+
+```{r}
+round(res[["prot"]]$cappedLinearFit$params, 2)
+```
+
+Estimated $\alpha$ values are 1 for both precursor- and protein group-level data. 
+
+
+## Detection probability curve assuming normal observed intensities
+
+```{r, fig.width = 8, fig.height = 10}
+par(mfrow = c(2, 1))
+for (res_i in 1:2) {
+  eachRes <- res[[res_i]]
+  plotDPC(eachRes$nuis, eachRes$dpcFit, jitter.amount = 1/ncol(usp1_prec)/2, 
+          point.cex = 0.15)
+  title(sub = c("Precursor-level", "Protein-level")[res_i])
+}
+```
+
+With estimated parameters for the fitted d on precursor-level data being:
+
+```{r}
+round(res$prec$dpcFit$beta, 2)
+```
+
+and estimated parameters on protein-level data being:
+
+```{r}
+round(res$prot$dpcFit$beta, 2)
+```
+
+
+
+
+<br>
+<br>
+<br>
+<br>
 
 
 
 # References
 
-- Li, M., Parker, B.L., Pearson, E., Hunter, B., Cao, J., Koay, Y.C., Guneratne, O., James, D.E., Yang, J., Lal, S. and O’Sullivan, J.F., 2020. Core functional nodes and sex-specific pathways in human ischaemic and dilated cardiomyopathy. *Nature communications*, 11(1), pp.1-12.
+<div id="refs"></div>
 
+
+<br>
+<br>
+<br>
+<br>
 
 
 # Session information

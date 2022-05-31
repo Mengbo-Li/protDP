@@ -4,8 +4,8 @@
 #' The `getNuisance` function fits a logistic-linear model for detection
 #' proportion to the observed average intensity in each precursor. It also
 #' returns a list of nuisance parameters for convenience of use when estimating
-#' DPC, such as the vector of obeseved mean intensity in each precursor, the
-#' total samples size and the eBayes-trended obeseved variances in each
+#' DPC, such as the vector of observed mean intensity in each precursor, the
+#' total samples size and the eBayes-trended observed variances in each
 #' precursor.
 #'
 #' @param Y The log2-transformed intensity matrix where rows are precursors and

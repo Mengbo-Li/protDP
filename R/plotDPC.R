@@ -24,21 +24,24 @@ plotDPC <- function(nuis, dpcFit,
   if (add.jitter) y <- jitter(y, amount = jitter.amount)
   plot(x = x, y = y,
        pch = 16, cex = point.cex, ylim = ylim,
-       xlab = expression(frac(mu[obs] + mu[mis], 2)), ylab = "Detection probability",
-       main = "DPC: Average log intensity vs detection probability")
+       xlab = "Intensity", ylab = "Detection probability",
+       main = "Detection probability curve")
   if (!capped) {
     x <- x[order(x)]
     lines(x = x, y = plogis(nuis$betaStart[1] + nuis$betaStart[2]*x),
           lty = "dashed", lwd = lwd)
     lines(x = x, y = plogis(dpcFit$beta[1] + dpcFit$beta[2]*x),
           col = "blue", lwd = lwd)
-    legend("bottomright", legend = c("Start", "Final"), col = c("black", "blue"), lty = c(2, 1), lwd = lwd)
+    legend("bottomright", legend = c("Start", "Final"),
+           col = c("black", "blue"), lty = c(2, 1), lwd = lwd, cex = 0.8)
   } else {
     x <- x[order(x)]
-    lines(x = x, y = dpcFit$hist["i=0", "alpha"] * plogis(dpcFit$hist["i=0", "b0"] + dpcFit$hist["i=0", "b1"]*x),
+    lines(x = x, y = dpcFit$hist["i=0", "alpha"] *
+            plogis(dpcFit$hist["i=0", "b0"] + dpcFit$hist["i=0", "b1"]*x),
           lty = "dashed", lwd = lwd)
     lines(x = x, y = dpcFit$alpha * plogis(dpcFit$beta[1] + dpcFit$beta[2]*x),
           col = "blue", lwd = lwd)
-    legend("bottomright", legend = c("Start", "Final"), col = c("black", "blue"), lty = c(2, 1), lwd = lwd)
+    legend("bottomright", legend = c("Start", "Final"),
+           col = c("black", "blue"), lty = c(2, 1), lwd = lwd, cex = 0.8)
   }
 }

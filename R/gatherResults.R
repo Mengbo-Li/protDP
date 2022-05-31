@@ -1,9 +1,11 @@
 #' Wrapper function of all presented results
 #'
-#' @param data The log2-transformed intensity matrix where rows are precursors and
-#' columns are samples.
+#' @param data The log2-transformed intensity matrix where rows are precursors
+#' and columns are samples.
 #'
-#' @return List of results including
+#' @return List of results including the logistic-spline fits, the deviance
+#' partitioning plot, the capped logit-linear fit and the fitted detection
+#' probability curve assuming normal observed intensities.
 #'
 #' @examples
 #' ## See the vignettes.
@@ -37,7 +39,7 @@ gatherResults <- function(data) {
   devPlot <- ggplot(slice(devs, 2:4), aes(x = df, y = percDevReduced)) +
     geom_point() +
     geom_line() +
-    geom_text(aes(label = signif(percDevReduced, 4)), vjust = -0.8) +
+    geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
     scale_x_continuous(breaks = c(1, 3, 5)) +
     labs(x = "DF", y = "Deviance% reduced") +
     theme_classic()

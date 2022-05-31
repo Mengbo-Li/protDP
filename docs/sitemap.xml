@@ -25,6 +25,21 @@
     <loc>/reference/cappedLogit_ztbinom.html</loc>
   </url>
   <url>
+    <loc>/reference/charite.html</loc>
+  </url>
+  <url>
+    <loc>/reference/datasetA.html</loc>
+  </url>
+  <url>
+    <loc>/reference/datasetB.html</loc>
+  </url>
+  <url>
+    <loc>/reference/datasetC.html</loc>
+  </url>
+  <url>
+    <loc>/reference/datasetD.html</loc>
+  </url>
+  <url>
     <loc>/reference/ddaPlasma.html</loc>
   </url>
   <url>
@@ -58,9 +73,21 @@
     <loc>/reference/maxdia.html</loc>
   </url>
   <url>
+    <loc>/reference/mouseSILAC.html</loc>
+  </url>
+  <url>
     <loc>/reference/plotDPC.html</loc>
   </url>
   <url>
     <loc>/reference/plotEmpSplines.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ratio2.5.html</loc>
+  </url>
+  <url>
+    <loc>/reference/shbheart.html</loc>
+  </url>
+  <url>
+    <loc>/reference/tmt10plex.html</loc>
   </url>
 </urlset>

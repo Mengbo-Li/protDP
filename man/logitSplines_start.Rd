@@ -17,7 +17,8 @@ logitSplines_start(dp, mu, wt, df = 1)
 \item{df}{Degrees of freedom for the natural cubic spline.}
 }
 \value{
-A list of fitted coefficients and the basis matrix for the spline.
+A list of fitted coefficients and the basis matrix for a spline with
+some degrees of freedom.
 }
 \description{
 Get the initial estimates for a logistic spline fit by assuming the

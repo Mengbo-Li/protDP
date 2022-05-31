@@ -7,11 +7,13 @@
 gatherResults(data)
 }
 \arguments{
-\item{data}{The log2-transformed intensity matrix where rows are precursors and
-columns are samples.}
+\item{data}{The log2-transformed intensity matrix where rows are precursors
+and columns are samples.}
 }
 \value{
-List of results including
+List of results including the logistic-spline fits, the deviance
+partitioning plot, the capped logit-linear fit and the fitted detection
+probability curve assuming normal observed intensities.
 }
 \description{
 Wrapper function of all presented results

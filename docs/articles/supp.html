@@ -73,146 +73,622 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
+<p>On this page, the analysis workflow presented in the main text is
+applied on each of the four example datasets on the protein group level.
+Additionally, two more datasets were downloaded and the same analysis
+are performed on both precursor- and protein-levels.</p>
 </div>
 <div class="section level2">
 <h2 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">protDP</span><span class="op">)</span></code></pre></div>
-<p>Consider natural cubic splines generated with 1, 3 and 5 degrees of
-freedom:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">dfList</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span>, <span class="fl">2</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">protDP</span><span class="op">)</span>
+<span class="va">dfList</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span>, <span class="fl">2</span><span class="op">)</span>
 <span class="va">lineColours</span> <span class="op">&lt;-</span> <span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span><span class="fl">4</span>, <span class="st">"Dark2"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="dataset-s1-sydney-heart-bank-data">Dataset S1: Sydney heart bank data<a class="anchor" aria-label="anchor" href="#dataset-s1-sydney-heart-bank-data"></a>
+<h2 id="dataset-a-hybrid-proteome-data">Dataset A: Hybrid proteome data<a class="anchor" aria-label="anchor" href="#dataset-a-hybrid-proteome-data"></a>
 </h2>
-<p>This dataset is acquired by DIA and processed with Spectronaut with a
-spectral library generated from pooled DDA samples.</p>
+<p>LFQ intensities summarised by MaxLFQ <span class="citation">(Cox et
+al. 2014)</span> were extracted from the DIA-NN <span class="citation">(Demichev et al. 2020)</span> output on the protein
+group level. The log2-transformation is applied to LFQ intensities.</p>
 <div class="section level3">
-<h3 id="data-summary">Data summary<a class="anchor" aria-label="anchor" href="#data-summary"></a>
+<h3 id="data-overview">Data overview<a class="anchor" aria-label="anchor" href="#data-overview"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"heart"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(heart)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">42742</span>    <span class="dv">24</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>heart[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                                     S1   S4   S8   S9  S14</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>_LVLVNAVYFR_<span class="fl">.2</span>                     <span class="fl">18.6</span> <span class="fl">18.5</span> <span class="fl">18.4</span> <span class="fl">19.0</span> <span class="fl">18.6</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>_SC[<span class="fu">Carbamidomethyl</span> (C)]DFLSSFR_<span class="fl">.2</span> <span class="fl">17.3</span> <span class="fl">17.6</span> <span class="fl">17.3</span> <span class="fl">17.9</span> <span class="fl">17.7</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>_ADFSGMSQTDLSLSK_<span class="fl">.2</span>                <span class="fl">14.8</span> <span class="fl">16.1</span> <span class="fl">16.0</span> <span class="fl">16.5</span> <span class="fl">16.1</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>_SGGGGDIHQGFQSLLTEVNK_<span class="fl">.3</span>           <span class="fl">18.3</span> <span class="fl">18.4</span> <span class="fl">18.7</span> <span class="fl">18.9</span> <span class="fl">18.5</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>_SGGGGDIHQGFQSLLTEVNK_<span class="fl">.2</span>           <span class="fl">18.3</span> <span class="fl">18.2</span> <span class="fl">18.1</span> <span class="fl">18.4</span> <span class="fl">15.8</span></span></code></pre></div>
-<p>The overall proportion of missing data</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(heart)) <span class="sc">/</span> <span class="fu">length</span>(heart)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.334</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"datasetA"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">log2</span>(datasetA<span class="sc">$</span>prot)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(dat)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">5974</span>    <span class="dv">3</span></span></code></pre></div>
+<p>The overall proportion of missing data on the protein level is equal
+to</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(dat)) <span class="sc">/</span> <span class="fu">length</span>(dat)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.0505</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="empirical-logistic-splines-for-detected-proportions">Empirical logistic splines for detected proportions<a class="anchor" aria-label="anchor" href="#empirical-logistic-splines-for-detected-proportions"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">heartRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">heart</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">dfList</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hyeProt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">dfList</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
   <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>
-    <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">heartRes</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">heartRes</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
-                   <span class="va">heartRes</span><span class="op">$</span><span class="va">splineFits</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">params</span>, 
+    <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">hyeProt</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">hyeProt</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+                   <span class="va">hyeProt</span><span class="op">$</span><span class="va">splineFits</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">params</span>, 
                    lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, 
-                   jitter.amount <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">heart</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>, point.cex <span class="op">=</span> <span class="fl">0.1</span>, 
-                   capped <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+                   jitter.amount <span class="op">=</span> <span class="cn">NULL</span>, point.cex <span class="op">=</span> <span class="fl">0.15</span>, 
+                   capped <span class="op">=</span> <span class="cn">FALSE</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.04</span><span class="op">)</span><span class="op">)</span>
   <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span>
-    <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">heartRes</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">heartRes</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
-                   <span class="va">heartRes</span><span class="op">$</span><span class="va">splineFits</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">params</span>, 
+    <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">hyeProt</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">hyeProt</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+                   <span class="va">hyeProt</span><span class="op">$</span><span class="va">splineFits</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">params</span>, 
                    plot.dotts <span class="op">=</span> <span class="cn">FALSE</span>, 
                    lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, capped <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="op">}</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"df = "</span>, <span class="va">dfList</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">lineColours</span>, lwd <span class="op">=</span> <span class="fl">2</span>, lty <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
-<p><img src="supp_files/figure-html/unnamed-chunk-6-1.png" width="768"></p>
+<span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"df = "</span>, <span class="va">dfList</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">lineColours</span>, lwd <span class="op">=</span> <span class="fl">2</span>, lty <span class="op">=</span> <span class="fl">1</span>, cex <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-4-1.png" width="768"></p>
 </div>
 <div class="section level3">
 <h3 id="reduced-deviance-compared-to-an-intercept-model">Reduced deviance compared to an intercept model<a class="anchor" aria-label="anchor" href="#reduced-deviance-compared-to-an-intercept-model"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">heartRes</span><span class="op">$</span><span class="va">devPlot</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0.95</span>, <span class="fl">1</span><span class="op">)</span></code></pre></div>
-<p><img src="supp_files/figure-html/unnamed-chunk-7-1.png" width="576"></p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hyeProt</span><span class="op">$</span><span class="va">devPlot</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0.90</span>, <span class="fl">1</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-5-1.png" width="576"></p>
 </div>
 <div class="section level3">
 <h3 id="empirical-logit-linear-curve-with-capped-probabilities">Empirical logit-linear curve with capped probabilities<a class="anchor" aria-label="anchor" href="#empirical-logit-linear-curve-with-capped-probabilities"></a>
 </h3>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>heartRes<span class="sc">$</span>cappedLinearFit<span class="sc">$</span>params</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>alpha    b0    b1 </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a> <span class="fl">1.00</span> <span class="sc">-</span><span class="fl">2.98</span> <span class="fl">13.29</span> </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plotEmpSplines</span>(heartRes<span class="sc">$</span>nuis, <span class="at">X =</span> heartRes<span class="sc">$</span>splineFits_params0[[<span class="dv">1</span>]]<span class="sc">$</span>X, </span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>               heartRes<span class="sc">$</span>cappedLinearFit<span class="sc">$</span>params, </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">lineCol =</span> lineColours[<span class="dv">1</span>], </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">jitter.amount =</span> <span class="dv">1</span><span class="sc">/</span><span class="fu">ncol</span>(heart)<span class="sc">/</span><span class="dv">2</span>, <span class="at">point.cex =</span> <span class="fl">0.1</span>)</span></code></pre></div>
-<p><img src="supp_files/figure-html/unnamed-chunk-8-1.png" width="768"></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">hyeProt</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">hyeProt</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+               <span class="va">hyeProt</span><span class="op">$</span><span class="va">cappedLinearFit</span><span class="op">$</span><span class="va">params</span>, 
+               lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.04</span><span class="op">)</span>, 
+               jitter.amount <span class="op">=</span> <span class="cn">NULL</span>, point.cex <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-6-1.png" width="768"></p>
+<p>The estimated paramters are</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(hyeProt<span class="sc">$</span>cappedLinearFit<span class="sc">$</span>params, <span class="dv">2</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>alpha    b0    b1 </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a> <span class="fl">1.00</span> <span class="sc">-</span><span class="fl">2.33</span> <span class="fl">19.98</span> </span></code></pre></div>
+<p>We see that the estimated <span class="math inline">\(\alpha\)</span>
+value is 1, suggesting no MCAR exists in data.</p>
 </div>
 <div class="section level3">
 <h3 id="detection-probability-curve-assuming-normal-observed-intensities">Detection probability curve assuming normal observed
 intensities<a class="anchor" aria-label="anchor" href="#detection-probability-curve-assuming-normal-observed-intensities"></a>
 </h3>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>heartRes<span class="sc">$</span>dpcFit<span class="sc">$</span>beta</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="sc">-</span><span class="fl">7.791</span>  <span class="fl">0.518</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plotDPC</span>(heartRes<span class="sc">$</span>nuis, heartRes<span class="sc">$</span>dpcFit, <span class="at">jitter.amount =</span> <span class="dv">1</span><span class="sc">/</span><span class="fu">ncol</span>(heart)<span class="sc">/</span><span class="dv">2</span>, <span class="at">point.cex =</span> <span class="fl">0.1</span>)</span></code></pre></div>
-<p><img src="supp_files/figure-html/unnamed-chunk-9-1.png" width="768"></p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plotDPC.html">plotDPC</a></span><span class="op">(</span><span class="va">hyeProt</span><span class="op">$</span><span class="va">nuis</span>, <span class="va">hyeProt</span><span class="op">$</span><span class="va">dpcFit</span>, jitter.amount <span class="op">=</span> <span class="cn">NULL</span>, point.cex <span class="op">=</span> <span class="fl">0.15</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.04</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-8-1.png" width="768"></p>
+<p>The estimated parameters for the detection probability curve are</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(hyeProt<span class="sc">$</span>dpcFit<span class="sc">$</span>beta, <span class="dv">2</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="sc">-</span><span class="fl">1.76</span>  <span class="fl">0.87</span></span></code></pre></div>
+<p><br><br><br><br></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="dataset-b-cell-cycle-proteomes">Dataset B: Cell cycle proteomes<a class="anchor" aria-label="anchor" href="#dataset-b-cell-cycle-proteomes"></a>
+</h2>
+<p>LFQ intensities summarised by MaxLFQ <span class="citation">(Cox et
+al. 2014)</span> were extracted from the DIA-NN <span class="citation">(Demichev et al. 2020)</span> report for protein
+groups. The log2-transformation is first applied to LFQ intensities.</p>
+<div class="section level3">
+<h3 id="data-overview-1">Data overview<a class="anchor" aria-label="anchor" href="#data-overview-1"></a>
+</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"datasetB"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">log2</span>(datasetB<span class="sc">$</span>prot)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(dat)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">2661</span>  <span class="dv">231</span></span></code></pre></div>
+<p>The overall proportion of missing data on the protein-level is</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(dat)) <span class="sc">/</span> <span class="fu">length</span>(dat)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.474</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="empirical-logistic-splines-for-detected-proportions-1">Empirical logistic splines for detected proportions<a class="anchor" aria-label="anchor" href="#empirical-logistic-splines-for-detected-proportions-1"></a>
+</h3>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">scProt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">dfList</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>
+    <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">scProt</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">scProt</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+                   <span class="va">scProt</span><span class="op">$</span><span class="va">splineFits</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">params</span>, 
+                   lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, 
+                   add.jitter <span class="op">=</span> <span class="cn">FALSE</span>, point.cex <span class="op">=</span> <span class="fl">0.15</span>, 
+                   capped <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span>
+    <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">scProt</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">scProt</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+                   <span class="va">scProt</span><span class="op">$</span><span class="va">splineFits</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">params</span>, 
+                   plot.dotts <span class="op">=</span> <span class="cn">FALSE</span>, 
+                   lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, capped <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="op">}</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"df = "</span>, <span class="va">dfList</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">lineColours</span>, lwd <span class="op">=</span> <span class="fl">2</span>, lty <span class="op">=</span> <span class="fl">1</span>, cex <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-12-1.png" width="768"></p>
+</div>
+<div class="section level3">
+<h3 id="reduced-deviance-compared-to-an-intercept-model-1">Reduced deviance compared to an intercept model<a class="anchor" aria-label="anchor" href="#reduced-deviance-compared-to-an-intercept-model-1"></a>
+</h3>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">scProt</span><span class="op">$</span><span class="va">devPlot</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0.90</span>, <span class="fl">1</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-13-1.png" width="576"></p>
+</div>
+<div class="section level3">
+<h3 id="empirical-logit-linear-curve-with-capped-probabilities-1">Empirical logit-linear curve with capped probabilities<a class="anchor" aria-label="anchor" href="#empirical-logit-linear-curve-with-capped-probabilities-1"></a>
+</h3>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">scProt</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">scProt</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+               <span class="va">scProt</span><span class="op">$</span><span class="va">cappedLinearFit</span><span class="op">$</span><span class="va">params</span>, 
+               lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, 
+               add.jitter <span class="op">=</span> <span class="cn">FALSE</span>, point.cex <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-14-1.png" width="768"></p>
+<p>Estimated parameters are</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(scProt<span class="sc">$</span>cappedLinearFit<span class="sc">$</span>params, <span class="dv">2</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>alpha    b0    b1 </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a> <span class="fl">0.99</span> <span class="sc">-</span><span class="fl">4.42</span> <span class="fl">17.13</span> </span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="detection-probability-curve-assuming-normal-observed-intensities-1">Detection probability curve assuming normal observed
+intensities<a class="anchor" aria-label="anchor" href="#detection-probability-curve-assuming-normal-observed-intensities-1"></a>
+</h3>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">scProt_dpcFit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dpc.html">dpc</a></span><span class="op">(</span><span class="va">diannSubset</span>, nuis <span class="op">=</span> <span class="va">scProt</span><span class="op">$</span><span class="va">nuis</span>, b1.upper <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span>
+<span class="fu"><a href="../reference/plotDPC.html">plotDPC</a></span><span class="op">(</span><span class="va">scProt</span><span class="op">$</span><span class="va">nuis</span>, <span class="va">scProt_dpcFit</span>, add.jitter <span class="op">=</span> <span class="cn">FALSE</span>, point.cex <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-16-1.png" width="768"></p>
+<p>Parameters of the detection probability curve are as follows:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(scProt_dpcFit<span class="sc">$</span>beta, <span class="dv">2</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="sc">-</span><span class="fl">12.9</span>   <span class="fl">1.2</span></span></code></pre></div>
+<p><br><br><br><br></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="dataset-c-hepg2-technical-replicate-data">Dataset C: HepG2 technical replicate data<a class="anchor" aria-label="anchor" href="#dataset-c-hepg2-technical-replicate-data"></a>
+</h2>
+<p>For the protein group level analysis, we use the
+<code>proteinGroups.txt</code> file from the MaxQuant output. The LFQ
+intensities are first log2-transformed.</p>
+<div class="section level3">
+<h3 id="data-overview-2">Data overview<a class="anchor" aria-label="anchor" href="#data-overview-2"></a>
+</h3>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"datasetC"</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">log2</span>(datasetC<span class="sc">$</span>prot)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(dat)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">6282</span>   <span class="dv">27</span></span></code></pre></div>
+<p>The overall proportion of missingness in protein group level data
+is</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(dat)) <span class="sc">/</span> <span class="fu">length</span>(dat)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.0553</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="empirical-logistic-splines-for-detected-proportions-2">Empirical logistic splines for detected proportions<a class="anchor" aria-label="anchor" href="#empirical-logistic-splines-for-detected-proportions-2"></a>
+</h3>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hepg2Prot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">dfList</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>
+    <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">hepg2Prot</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">hepg2Prot</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+                   <span class="va">hepg2Prot</span><span class="op">$</span><span class="va">splineFits</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">params</span>, 
+                   lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, 
+                   jitter.amount <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>, point.cex <span class="op">=</span> <span class="fl">0.2</span>, 
+                   capped <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span>
+    <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">hepg2Prot</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">hepg2Prot</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+                   <span class="va">hepg2Prot</span><span class="op">$</span><span class="va">splineFits</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">params</span>, 
+                   plot.dotts <span class="op">=</span> <span class="cn">FALSE</span>, 
+                   lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, capped <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="op">}</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"df = "</span>, <span class="va">dfList</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">lineColours</span>, lwd <span class="op">=</span> <span class="fl">2</span>, lty <span class="op">=</span> <span class="fl">1</span>, cex <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-20-1.png" width="768"></p>
+</div>
+<div class="section level3">
+<h3 id="reduced-deviance-compared-to-an-intercept-model-2">Reduced deviance compared to an intercept model<a class="anchor" aria-label="anchor" href="#reduced-deviance-compared-to-an-intercept-model-2"></a>
+</h3>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hepg2Prot</span><span class="op">$</span><span class="va">devPlot</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0.90</span>, <span class="fl">1</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-21-1.png" width="576"></p>
+</div>
+<div class="section level3">
+<h3 id="empirical-logit-linear-curve-with-capped-probabilities-2">Empirical logit-linear curve with capped probabilities<a class="anchor" aria-label="anchor" href="#empirical-logit-linear-curve-with-capped-probabilities-2"></a>
+</h3>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">hepg2Prot</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">hepg2Prot</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+               <span class="va">hepg2Prot</span><span class="op">$</span><span class="va">cappedLinearFit</span><span class="op">$</span><span class="va">params</span>, 
+               lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, 
+               jitter.amount <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>, point.cex <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-22-1.png" width="768"></p>
+<p>The estimated parameters are</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(hepg2Prot<span class="sc">$</span>cappedLinearFit<span class="sc">$</span>params, <span class="dv">2</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>alpha    b0    b1 </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a> <span class="fl">0.99</span> <span class="sc">-</span><span class="fl">1.94</span> <span class="fl">14.66</span> </span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="detection-probability-curve-assuming-normal-observed-intensities-2">Detection probability curve assuming normal observed
+intensities<a class="anchor" aria-label="anchor" href="#detection-probability-curve-assuming-normal-observed-intensities-2"></a>
+</h3>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plotDPC.html">plotDPC</a></span><span class="op">(</span><span class="va">hepg2Prot</span><span class="op">$</span><span class="va">nuis</span>, <span class="va">hepg2Prot</span><span class="op">$</span><span class="va">dpcFit</span>, jitter.amount <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>, point.cex <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-24-1.png" width="768"></p>
+<p>Parameters of the detection probability curve are</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(hepg2Prot<span class="sc">$</span>dpcFit<span class="sc">$</span>beta, <span class="dv">2</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="sc">-</span><span class="fl">11.90</span>   <span class="fl">0.55</span></span></code></pre></div>
+<p><br><br><br><br></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="dataset-d-human-blood-plasma-proteome">Dataset D: Human blood plasma proteome<a class="anchor" aria-label="anchor" href="#dataset-d-human-blood-plasma-proteome"></a>
+</h2>
+<p>For the protein group level analysis, we use the
+<code>proteinGroups.txt</code> file from the MaxQuant output downloaded
+from the ProteomeXchange Consortium via the PRIDE partner repository
+with the dataset identifier PXD014777.</p>
+<div class="section level3">
+<h3 id="data-overview-3">Data overview<a class="anchor" aria-label="anchor" href="#data-overview-3"></a>
+</h3>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"datasetD"</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">log2</span>(datasetD<span class="sc">$</span>prot)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(dat)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">332</span> <span class="dv">212</span></span></code></pre></div>
+<p>The overall proportion of missing data in the protein group level
+data is</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(dat)) <span class="sc">/</span> <span class="fu">length</span>(dat)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.412</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="empirical-logistic-splines-for-detected-proportions-3">Empirical logistic splines for detected proportions<a class="anchor" aria-label="anchor" href="#empirical-logistic-splines-for-detected-proportions-3"></a>
+</h3>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ddaPlasmaProt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">dfList</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>
+    <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">ddaPlasmaProt</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">ddaPlasmaProt</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+                   <span class="va">ddaPlasmaProt</span><span class="op">$</span><span class="va">splineFits</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">params</span>, 
+                   lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, 
+                   add.jitter <span class="op">=</span> <span class="cn">FALSE</span>, point.cex <span class="op">=</span> <span class="fl">0.2</span>, 
+                   capped <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span>
+    <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">ddaPlasmaProt</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">ddaPlasmaProt</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+                   <span class="va">ddaPlasmaProt</span><span class="op">$</span><span class="va">splineFits</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">params</span>, 
+                   plot.dotts <span class="op">=</span> <span class="cn">FALSE</span>, 
+                   lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, capped <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="op">}</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"df = "</span>, <span class="va">dfList</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">lineColours</span>, lwd <span class="op">=</span> <span class="fl">2</span>, lty <span class="op">=</span> <span class="fl">1</span>, cex <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-28-1.png" width="768"></p>
+</div>
+<div class="section level3">
+<h3 id="reduced-deviance-compared-to-an-intercept-model-3">Reduced deviance compared to an intercept model<a class="anchor" aria-label="anchor" href="#reduced-deviance-compared-to-an-intercept-model-3"></a>
+</h3>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ddaPlasmaProt</span><span class="op">$</span><span class="va">devPlot</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0.90</span>, <span class="fl">1</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-29-1.png" width="576"></p>
+</div>
+<div class="section level3">
+<h3 id="empirical-logit-linear-curve-with-capped-probabilities-3">Empirical logit-linear curve with capped probabilities<a class="anchor" aria-label="anchor" href="#empirical-logit-linear-curve-with-capped-probabilities-3"></a>
+</h3>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">ddaPlasmaProt</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">ddaPlasmaProt</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+               <span class="va">ddaPlasmaProt</span><span class="op">$</span><span class="va">cappedLinearFit</span><span class="op">$</span><span class="va">params</span>, 
+               lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, 
+               add.jitter <span class="op">=</span> <span class="cn">FALSE</span>, point.cex <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-30-1.png" width="768"></p>
+<p>Estimated parameters are</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(ddaPlasmaProt<span class="sc">$</span>cappedLinearFit<span class="sc">$</span>params, <span class="dv">2</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>alpha    b0    b1 </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a> <span class="fl">0.98</span> <span class="sc">-</span><span class="fl">3.65</span> <span class="fl">18.16</span> </span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="detection-probability-curve-assuming-normal-observed-intensities-3">Detection probability curve assuming normal observed
+intensities<a class="anchor" aria-label="anchor" href="#detection-probability-curve-assuming-normal-observed-intensities-3"></a>
+</h3>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plotDPC.html">plotDPC</a></span><span class="op">(</span><span class="va">ddaPlasmaProt</span><span class="op">$</span><span class="va">nuis</span>, <span class="va">ddaPlasmaProt</span><span class="op">$</span><span class="va">dpcFit</span>, add.jitter <span class="op">=</span> <span class="cn">FALSE</span>, point.cex <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-32-1.png" width="768"></p>
+<p>Parameters for the fitted detection probability curve are</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(ddaPlasmaProt<span class="sc">$</span>dpcFit<span class="sc">$</span>beta, <span class="dv">2</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="sc">-</span><span class="fl">10.86</span>   <span class="fl">0.78</span></span></code></pre></div>
+<p><br><br><br><br></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="supplmentary-dataset-sydney-heart-bank-data">Supplmentary dataset: Sydney heart bank data<a class="anchor" aria-label="anchor" href="#supplmentary-dataset-sydney-heart-bank-data"></a>
+</h2>
+<p>Cryopreserved left ventricular myocardium samples from the human
+hearts were analysed. MS data were acquired in DIA mode and analysed by
+Spectronaunt v12 with a DDA spectral library generated from the pooled
+sample <span class="citation">(Li et al. 2020)</span>. Details on sample
+preparation, LC-MS/MS workflow and data processing steps including the
+generation of the spectial library can be found in <span class="citation">Li et al. (2020)</span>. Here we consider the healthy
+donor heart samples. Both precursor- and protein group-level data are
+log2-transformed before analysis.</p>
+<div class="section level3">
+<h3 id="data-summary">Data summary<a class="anchor" aria-label="anchor" href="#data-summary"></a>
+</h3>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"shbheart"</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>shbheart_prec <span class="ot">&lt;-</span> <span class="fu">log2</span>(shbheart<span class="sc">$</span>prec)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(shbheart_prec)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">42742</span>    <span class="dv">24</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>shbheart_prot <span class="ot">&lt;-</span> <span class="fu">log2</span>(shbheart<span class="sc">$</span>prot)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(shbheart_prot)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">3208</span>   <span class="dv">24</span></span></code></pre></div>
+<p>The overall proportion of missing data on the precursor-level is</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(shbheart_prec)) <span class="sc">/</span> <span class="fu">length</span>(shbheart_prec)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.334</span></span></code></pre></div>
+<p>While the overall proportion of missingness on the protein
+group-level is</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(shbheart_prot)) <span class="sc">/</span> <span class="fu">length</span>(shbheart_prot)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.12</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="empirical-logistic-splines-for-detected-proportions-4">Empirical logistic splines for detected proportions<a class="anchor" aria-label="anchor" href="#empirical-logistic-splines-for-detected-proportions-4"></a>
+</h3>
+<p>The analysis workflow presented in the manuscript is applied on the
+dataset on both precursor- and protein group-level data:</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>prec <span class="op">=</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">shbheart_prec</span><span class="op">)</span>, prot <span class="op">=</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">shbheart_prot</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">res_i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">eachRes</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">[[</span><span class="va">res_i</span><span class="op">]</span><span class="op">]</span>
+  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">dfList</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>
+    <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">eachRes</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">eachRes</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+                   <span class="va">eachRes</span><span class="op">$</span><span class="va">splineFits</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">params</span>, lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, 
+                   jitter.amount <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">shbheart_prec</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>, point.cex <span class="op">=</span> <span class="fl">0.15</span>, 
+                   capped <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span>
+    <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">eachRes</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">eachRes</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+                   <span class="va">eachRes</span><span class="op">$</span><span class="va">splineFits</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">params</span>, 
+                   plot.dotts <span class="op">=</span> <span class="cn">FALSE</span>, lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, capped <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  <span class="op">}</span>
+  <span class="fu"><a href="https://rdrr.io/r/graphics/title.html" class="external-link">title</a></span><span class="op">(</span>sub <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Precursor-level"</span>, <span class="st">"Protein-level"</span><span class="op">)</span><span class="op">[</span><span class="va">res_i</span><span class="op">]</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"df = "</span>, <span class="va">dfList</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">lineColours</span>, lwd <span class="op">=</span> <span class="fl">2</span>, lty <span class="op">=</span> <span class="fl">1</span>, cex <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>
+<span class="op">}</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-38-1.png" width="768"></p>
+</div>
+<div class="section level3">
+<h3 id="reduced-deviance-compared-to-an-intercept-model-4">Reduced deviance compared to an intercept model<a class="anchor" aria-label="anchor" href="#reduced-deviance-compared-to-an-intercept-model-4"></a>
+</h3>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">devPlot1</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">devPlot</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0.90</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Precursor-level"</span><span class="op">)</span>
+<span class="va">devPlot2</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">devPlot</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0.90</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Protein-level"</span><span class="op">)</span>
+<span class="fu">gridExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html" class="external-link">grid.arrange</a></span><span class="op">(</span><span class="va">devPlot1</span>, <span class="va">devPlot2</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-39-1.png" width="1152"></p>
+</div>
+<div class="section level3">
+<h3 id="empirical-logit-linear-curve-with-capped-probabilities-4">Empirical logit-linear curve with capped probabilities<a class="anchor" aria-label="anchor" href="#empirical-logit-linear-curve-with-capped-probabilities-4"></a>
+</h3>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">res_i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">eachRes</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">[[</span><span class="va">res_i</span><span class="op">]</span><span class="op">]</span>
+  <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">eachRes</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">eachRes</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+                 <span class="va">eachRes</span><span class="op">$</span><span class="va">cappedLinearFit</span><span class="op">$</span><span class="va">params</span>, 
+                 lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, 
+                 jitter.amount <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">shbheart_prec</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>, point.cex <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/graphics/title.html" class="external-link">title</a></span><span class="op">(</span>sub <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Precursor-level"</span>, <span class="st">"Protein-level"</span><span class="op">)</span><span class="op">[</span><span class="va">res_i</span><span class="op">]</span><span class="op">)</span>
+<span class="op">}</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-40-1.png" width="768"></p>
+<p>With estimated parameters on precursor-level data being:</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(res[[<span class="st">"prec"</span>]]<span class="sc">$</span>cappedLinearFit<span class="sc">$</span>params, <span class="dv">2</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>alpha    b0    b1 </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a> <span class="fl">1.00</span> <span class="sc">-</span><span class="fl">2.98</span> <span class="fl">13.29</span> </span></code></pre></div>
+<p>and estimated parameters on protein-level data being:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(res[[<span class="st">"prot"</span>]]<span class="sc">$</span>cappedLinearFit<span class="sc">$</span>params, <span class="dv">2</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>alpha    b0    b1 </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.0</span>  <span class="sc">-</span><span class="fl">1.5</span>  <span class="fl">13.6</span> </span></code></pre></div>
+<p>Estimated <span class="math inline">\(\alpha\)</span> values are
+equal to 1 on both precursor- and protein group-level data.</p>
+</div>
+<div class="section level3">
+<h3 id="detection-probability-curve-assuming-normal-observed-intensities-4">Detection probability curve assuming normal observed
+intensities<a class="anchor" aria-label="anchor" href="#detection-probability-curve-assuming-normal-observed-intensities-4"></a>
+</h3>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">res_i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">eachRes</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">[[</span><span class="va">res_i</span><span class="op">]</span><span class="op">]</span>
+  <span class="fu"><a href="../reference/plotDPC.html">plotDPC</a></span><span class="op">(</span><span class="va">eachRes</span><span class="op">$</span><span class="va">nuis</span>, <span class="va">eachRes</span><span class="op">$</span><span class="va">dpcFit</span>, jitter.amount <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">shbheart_prec</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>, point.cex <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/graphics/title.html" class="external-link">title</a></span><span class="op">(</span>sub <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Precursor-level"</span>, <span class="st">"Protein-level"</span><span class="op">)</span><span class="op">[</span><span class="va">res_i</span><span class="op">]</span><span class="op">)</span>
+<span class="op">}</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-43-1.png" width="768"></p>
+<p>With estimated parameters on precursor-level data being:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(res[[<span class="st">"prec"</span>]]<span class="sc">$</span>dpcFit<span class="sc">$</span>beta, <span class="dv">2</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="sc">-</span><span class="fl">7.79</span>  <span class="fl">0.52</span></span></code></pre></div>
+<p>and estimated parameters on protein-level data being:</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(res[[<span class="st">"prot"</span>]]<span class="sc">$</span>dpcFit<span class="sc">$</span>beta, <span class="dv">2</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="sc">-</span><span class="fl">7.09</span>  <span class="fl">0.57</span></span></code></pre></div>
+<p><br><br><br><br></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="supplmentary-dataset-ups1-spiked-in-yeast-extract">Supplmentary dataset: UPS1 spiked in yeast extract<a class="anchor" aria-label="anchor" href="#supplmentary-dataset-ups1-spiked-in-yeast-extract"></a>
+</h2>
+<p>Three concentrations of UPS1 (25 fmol, 10 fmol and 5 fmol) were
+spiked in yeast extract <span class="citation">(Giai Gianetto et al.
+2016)</span>. This is a DDA dataset and MS raw data were processed by
+MaxQuant. Here we look at the dataset which compares 25 fmol to 10 fmol
+spiked-ins. Processed data were downloaded from ProteomeXchange
+Consortium via the PRIDE partner repository with the dataset identifier
+PXD002370. For peptide-level data, we use the <code>peptides.txt</code>
+file and for the protein-level analysis, we use the
+<code>proteinGroups.txt</code> file from the MaxQuant output.
+Log2-transformation is first applied before analysis.</p>
+<div class="section level3">
+<h3 id="data-summary-1">Data summary<a class="anchor" aria-label="anchor" href="#data-summary-1"></a>
+</h3>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"ratio2.5"</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>usp1_prec <span class="ot">&lt;-</span> <span class="fu">log2</span>(ratio2<span class="fl">.5</span><span class="sc">$</span>prec)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(usp1_prec)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">13186</span>     <span class="dv">6</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>usp1_prot <span class="ot">&lt;-</span> <span class="fu">log2</span>(ratio2<span class="fl">.5</span><span class="sc">$</span>prot)</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(usp1_prot)</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">2342</span>    <span class="dv">6</span></span></code></pre></div>
+<p>The overall proportion of missing data for the precursor-level data
+is</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(usp1_prec)) <span class="sc">/</span> <span class="fu">length</span>(usp1_prec)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.147</span></span></code></pre></div>
+<p>The overall proportion of missing data for the protein-level data
+is</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(usp1_prot)) <span class="sc">/</span> <span class="fu">length</span>(usp1_prot)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.0677</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="empirical-logistic-splines-for-detected-proportions-5">Empirical logistic splines for detected proportions<a class="anchor" aria-label="anchor" href="#empirical-logistic-splines-for-detected-proportions-5"></a>
+</h3>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>prec <span class="op">=</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">usp1_prec</span><span class="op">)</span>, prot <span class="op">=</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">usp1_prot</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">res_i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">eachRes</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">[[</span><span class="va">res_i</span><span class="op">]</span><span class="op">]</span>
+  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">dfList</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>
+    <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">eachRes</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">eachRes</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+                   <span class="va">eachRes</span><span class="op">$</span><span class="va">splineFits</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">params</span>, lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, 
+                   jitter.amount <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">usp1_prec</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>, point.cex <span class="op">=</span> <span class="fl">0.15</span>, 
+                   capped <span class="op">=</span> <span class="cn">FALSE</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.08</span><span class="op">)</span><span class="op">)</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span>
+    <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">eachRes</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">eachRes</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+                   <span class="va">eachRes</span><span class="op">$</span><span class="va">splineFits</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">params</span>, 
+                   plot.dotts <span class="op">=</span> <span class="cn">FALSE</span>, lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, capped <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  <span class="op">}</span>
+  <span class="fu"><a href="https://rdrr.io/r/graphics/title.html" class="external-link">title</a></span><span class="op">(</span>sub <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Precursor-level"</span>, <span class="st">"Protein-level"</span><span class="op">)</span><span class="op">[</span><span class="va">res_i</span><span class="op">]</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"df = "</span>, <span class="va">dfList</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">lineColours</span>, lwd <span class="op">=</span> <span class="fl">2</span>, lty <span class="op">=</span> <span class="fl">1</span>, cex <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>
+<span class="op">}</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-50-1.png" width="768"></p>
+</div>
+<div class="section level3">
+<h3 id="reduced-deviance-compared-to-an-intercept-model-5">Reduced deviance compared to an intercept model<a class="anchor" aria-label="anchor" href="#reduced-deviance-compared-to-an-intercept-model-5"></a>
+</h3>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">devPlot1</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">devPlot</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0.90</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Precursor-level"</span><span class="op">)</span>
+<span class="va">devPlot2</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">devPlot</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0.90</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Protein-level"</span><span class="op">)</span>
+<span class="fu">gridExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html" class="external-link">grid.arrange</a></span><span class="op">(</span><span class="va">devPlot1</span>, <span class="va">devPlot2</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-51-1.png" width="1152"></p>
+</div>
+<div class="section level3">
+<h3 id="empirical-logit-linear-curve-with-capped-probabilities-5">Empirical logit-linear curve with capped probabilities<a class="anchor" aria-label="anchor" href="#empirical-logit-linear-curve-with-capped-probabilities-5"></a>
+</h3>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">res_i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">eachRes</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">[[</span><span class="va">res_i</span><span class="op">]</span><span class="op">]</span>
+  <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">eachRes</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">eachRes</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>, 
+                 <span class="va">eachRes</span><span class="op">$</span><span class="va">cappedLinearFit</span><span class="op">$</span><span class="va">params</span>, 
+                 lineCol <span class="op">=</span> <span class="va">lineColours</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, 
+                 jitter.amount <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">usp1_prec</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>, point.cex <span class="op">=</span> <span class="fl">0.15</span>, 
+                 ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.08</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/graphics/title.html" class="external-link">title</a></span><span class="op">(</span>sub <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Precursor-level"</span>, <span class="st">"Protein-level"</span><span class="op">)</span><span class="op">[</span><span class="va">res_i</span><span class="op">]</span><span class="op">)</span>
+<span class="op">}</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-52-1.png" width="768"></p>
+<p>With estimated parameters on precursor-level data being:</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(res[[<span class="st">"prec"</span>]]<span class="sc">$</span>cappedLinearFit<span class="sc">$</span>params, <span class="dv">2</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>alpha    b0    b1 </span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a> <span class="fl">1.00</span> <span class="sc">-</span><span class="fl">1.56</span> <span class="fl">11.30</span> </span></code></pre></div>
+<p>and estimated parameters on protein-level data being:</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(res[[<span class="st">"prot"</span>]]<span class="sc">$</span>cappedLinearFit<span class="sc">$</span>params, <span class="dv">2</span>)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>alpha    b0    b1 </span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a> <span class="fl">1.00</span> <span class="sc">-</span><span class="fl">1.29</span> <span class="fl">17.70</span> </span></code></pre></div>
+<p>Estimated <span class="math inline">\(\alpha\)</span> values are 1
+for both precursor- and protein group-level data.</p>
+</div>
+<div class="section level3">
+<h3 id="detection-probability-curve-assuming-normal-observed-intensities-5">Detection probability curve assuming normal observed
+intensities<a class="anchor" aria-label="anchor" href="#detection-probability-curve-assuming-normal-observed-intensities-5"></a>
+</h3>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="kw">for</span> <span class="op">(</span><span class="va">res_i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">eachRes</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">[[</span><span class="va">res_i</span><span class="op">]</span><span class="op">]</span>
+  <span class="fu"><a href="../reference/plotDPC.html">plotDPC</a></span><span class="op">(</span><span class="va">eachRes</span><span class="op">$</span><span class="va">nuis</span>, <span class="va">eachRes</span><span class="op">$</span><span class="va">dpcFit</span>, jitter.amount <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">usp1_prec</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>, 
+          point.cex <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/graphics/title.html" class="external-link">title</a></span><span class="op">(</span>sub <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Precursor-level"</span>, <span class="st">"Protein-level"</span><span class="op">)</span><span class="op">[</span><span class="va">res_i</span><span class="op">]</span><span class="op">)</span>
+<span class="op">}</span></code></pre></div>
+<p><img src="supp_files/figure-html/unnamed-chunk-55-1.png" width="768"></p>
+<p>With estimated parameters for the fitted d on precursor-level data
+being:</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(res<span class="sc">$</span>prec<span class="sc">$</span>dpcFit<span class="sc">$</span>beta, <span class="dv">2</span>)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="sc">-</span><span class="fl">12.4</span>   <span class="fl">0.6</span></span></code></pre></div>
+<p>and estimated parameters on protein-level data being:</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(res<span class="sc">$</span>prot<span class="sc">$</span>dpcFit<span class="sc">$</span>beta, <span class="dv">2</span>)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="sc">-</span><span class="fl">17.11</span>   <span class="fl">0.83</span></span></code></pre></div>
+<p><br><br><br><br></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<ul>
-<li>Li, M., Parker, B.L., Pearson, E., Hunter, B., Cao, J., Koay, Y.C.,
-Guneratne, O., James, D.E., Yang, J., Lal, S. and O’Sullivan, J.F.,
-2020. Core functional nodes and sex-specific pathways in human ischaemic
-and dilated cardiomyopathy. <em>Nature communications</em>, 11(1),
-pp.1-12.</li>
-</ul>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-cox2014accurate" class="csl-entry">
+Cox, Jürgen, Marco Y Hein, Christian A Luber, Igor Paron, Nagarjuna
+Nagaraj, and Matthias Mann. 2014. <span>“Accurate Proteome-Wide
+Label-Free Quantification by Delayed Normalization and Maximal Peptide
+Ratio Extraction, Termed MaxLFQ.”</span> <em>Molecular &amp; Cellular
+Proteomics</em> 13 (9): 2513–26.
+</div>
+<div id="ref-demichev2020dia" class="csl-entry">
+Demichev, Vadim, Christoph B Messner, Spyros I Vernardis, Kathryn S
+Lilley, and Markus Ralser. 2020. <span>“DIA-NN: Neural Networks and
+Interference Correction Enable Deep Proteome Coverage in High
+Throughput.”</span> <em>Nature Methods</em> 17 (1): 41–44.
+</div>
+<div id="ref-giai2016calibration" class="csl-entry">
+Giai Gianetto, Quentin, Florence Combes, Claire Ramus, Christophe
+Bruley, Yohann Couté, and Thomas Burger. 2016. <span>“Calibration Plot
+for Proteomics: A Graphical Tool to Visually Check the Assumptions
+Underlying FDR Control in Quantitative Experiments.”</span>
+<em>Proteomics</em> 16 (1): 29–32.
+</div>
+<div id="ref-li2020core" class="csl-entry">
+Li, Mengbo, Benjamin L Parker, Evangeline Pearson, Benjamin Hunter,
+Jacob Cao, Yen Chin Koay, Oneka Guneratne, et al. 2020. <span>“Core
+Functional Nodes and Sex-Specific Pathways in Human Ischaemic and
+Dilated Cardiomyopathy.”</span> <em>Nature Communications</em> 11 (1):
+1–12.
+</div>
+</div>
+<p><br><br><br><br></p>
 </div>
 <div class="section level2">
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>R version <span class="dv">4</span>.<span class="fl">2.0</span> (<span class="dv">2022-04-22</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>Platform<span class="sc">:</span> x86_64<span class="sc">-</span>apple<span class="sc">-</span><span class="fu">darwin17.0</span> (<span class="dv">64</span><span class="sc">-</span>bit)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>Running under<span class="sc">:</span> macOS Big Sur<span class="sc">/</span>Monterey <span class="fl">10.16</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>Matrix products<span class="sc">:</span> default</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>BLAS<span class="sc">:</span>   <span class="er">/</span>Library<span class="sc">/</span>Frameworks<span class="sc">/</span>R.framework<span class="sc">/</span>Versions<span class="sc">/</span><span class="fl">4.2</span><span class="sc">/</span>Resources<span class="sc">/</span>lib<span class="sc">/</span>libRblas.<span class="fl">0.</span>dylib</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>LAPACK<span class="sc">:</span> <span class="er">/</span>Library<span class="sc">/</span>Frameworks<span class="sc">/</span>R.framework<span class="sc">/</span>Versions<span class="sc">/</span><span class="fl">4.2</span><span class="sc">/</span>Resources<span class="sc">/</span>lib<span class="sc">/</span>libRlapack.dylib</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>locale<span class="sc">:</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] en_AU.UTF<span class="dv">-8</span><span class="sc">/</span>en_AU.UTF<span class="dv">-8</span><span class="sc">/</span>en_AU.UTF<span class="dv">-8</span><span class="sc">/</span>C<span class="sc">/</span>en_AU.UTF<span class="dv">-8</span><span class="sc">/</span>en_AU.UTF<span class="dv">-8</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>attached base packages<span class="sc">:</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] stats     graphics  grDevices utils     datasets  methods   base     </span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>other attached packages<span class="sc">:</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] limma_3.<span class="fl">52.1</span>     protDP_0.<span class="fl">1.0</span>     forcats_0.<span class="fl">5.1</span>    stringr_1.<span class="fl">4.0</span>    dplyr_1.<span class="fl">0.9</span>     </span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a> [<span class="dv">6</span>] purrr_0.<span class="fl">3.4</span>      readr_2.<span class="fl">1.2</span>      tidyr_1.<span class="fl">2.0</span>      tibble_3.<span class="fl">1.7</span>     ggplot2_3.<span class="fl">3.6</span>   </span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span>] tidyverse_1.<span class="fl">3.1</span>  BiocStyle_2.<span class="fl">24.0</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>loaded via a <span class="fu">namespace</span> (and not attached)<span class="sc">:</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] lubridate_1.<span class="fl">8.0</span>     assertthat_0.<span class="fl">2.1</span>    rprojroot_2.<span class="fl">0.3</span>     digest_0.<span class="fl">6.29</span>      </span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a> [<span class="dv">5</span>] utf8_1.<span class="fl">2.2</span>          R6_2.<span class="fl">5.1</span>            cellranger_1.<span class="fl">1.0</span>    backports_1.<span class="fl">4.1</span>    </span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a> [<span class="dv">9</span>] reprex_2.<span class="fl">0.1</span>        evaluate_0<span class="fl">.15</span>       highr_0<span class="fl">.9</span>           httr_1.<span class="fl">4.3</span>         </span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>[<span class="dv">13</span>] pillar_1.<span class="fl">7.0</span>        rlang_1.<span class="fl">0.2</span>         readxl_1.<span class="fl">4.0</span>        rstudioapi_0<span class="fl">.13</span>    </span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>[<span class="dv">17</span>] jquerylib_0.<span class="fl">1.4</span>     rmarkdown_2<span class="fl">.14</span>      pkgdown_2.<span class="fl">0.3</span>       labeling_0.<span class="fl">4.2</span>     </span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>[<span class="dv">21</span>] splines_4.<span class="fl">2.0</span>       textshaping_0.<span class="fl">3.6</span>   desc_1.<span class="fl">4.1</span>          munsell_0.<span class="fl">5.0</span>      </span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>[<span class="dv">25</span>] broom_0.<span class="fl">8.0</span>         compiler_4.<span class="fl">2.0</span>      modelr_0.<span class="fl">1.8</span>        xfun_0<span class="fl">.31</span>          </span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>[<span class="dv">29</span>] pkgconfig_2.<span class="fl">0.3</span>     systemfonts_1.<span class="fl">0.4</span>   htmltools_0.<span class="fl">5.2</span>     tidyselect_1.<span class="fl">1.2</span>   </span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>[<span class="dv">33</span>] bookdown_0<span class="fl">.26</span>       fansi_1.<span class="fl">0.3</span>         crayon_1.<span class="fl">5.1</span>        tzdb_0.<span class="fl">3.0</span>         </span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>[<span class="dv">37</span>] dbplyr_2.<span class="fl">1.1</span>        withr_2.<span class="fl">5.0</span>         grid_4.<span class="fl">2.0</span>          jsonlite_1.<span class="fl">8.0</span>     </span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>[<span class="dv">41</span>] gtable_0.<span class="fl">3.0</span>        lifecycle_1.<span class="fl">0.1</span>     DBI_1.<span class="fl">1.2</span>           magrittr_2.<span class="fl">0.3</span>     </span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>[<span class="dv">45</span>] scales_1.<span class="fl">2.0</span>        cli_3.<span class="fl">3.0</span>           stringi_1.<span class="fl">7.6</span>       cachem_1.<span class="fl">0.6</span>       </span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>[<span class="dv">49</span>] farver_2.<span class="fl">1.0</span>        fs_1.<span class="fl">5.2</span>            xml2_1.<span class="fl">3.3</span>          bslib_0.<span class="fl">3.1</span>        </span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>[<span class="dv">53</span>] ellipsis_0.<span class="fl">3.2</span>      ragg_1.<span class="fl">2.2</span>          generics_0.<span class="fl">1.2</span>      vctrs_0.<span class="fl">4.1</span>        </span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>[<span class="dv">57</span>] RColorBrewer_1<span class="fl">.1</span><span class="dv">-3</span>  tools_4.<span class="fl">2.0</span>         glue_1.<span class="fl">6.2</span>          hms_1.<span class="fl">1.1</span>          </span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>[<span class="dv">61</span>] fastmap_1.<span class="fl">1.0</span>       yaml_2.<span class="fl">3.5</span>          colorspace_2<span class="fl">.0</span><span class="dv">-3</span>    BiocManager_1.<span class="fl">30.18</span></span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>[<span class="dv">65</span>] rvest_1.<span class="fl">0.2</span>         memoise_2.<span class="fl">0.1</span>       knitr_1<span class="fl">.39</span>          haven_2.<span class="fl">5.0</span>        </span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>[<span class="dv">69</span>] sass_0.<span class="fl">4.1</span>         </span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>R version <span class="dv">4</span>.<span class="fl">2.0</span> (<span class="dv">2022-04-22</span>)</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>Platform<span class="sc">:</span> x86_64<span class="sc">-</span>apple<span class="sc">-</span><span class="fu">darwin17.0</span> (<span class="dv">64</span><span class="sc">-</span>bit)</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>Running under<span class="sc">:</span> macOS Big Sur<span class="sc">/</span>Monterey <span class="fl">10.16</span></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>Matrix products<span class="sc">:</span> default</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>BLAS<span class="sc">:</span>   <span class="er">/</span>Library<span class="sc">/</span>Frameworks<span class="sc">/</span>R.framework<span class="sc">/</span>Versions<span class="sc">/</span><span class="fl">4.2</span><span class="sc">/</span>Resources<span class="sc">/</span>lib<span class="sc">/</span>libRblas.<span class="fl">0.</span>dylib</span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>LAPACK<span class="sc">:</span> <span class="er">/</span>Library<span class="sc">/</span>Frameworks<span class="sc">/</span>R.framework<span class="sc">/</span>Versions<span class="sc">/</span><span class="fl">4.2</span><span class="sc">/</span>Resources<span class="sc">/</span>lib<span class="sc">/</span>libRlapack.dylib</span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>locale<span class="sc">:</span></span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] en_AU.UTF<span class="dv">-8</span><span class="sc">/</span>en_AU.UTF<span class="dv">-8</span><span class="sc">/</span>en_AU.UTF<span class="dv">-8</span><span class="sc">/</span>C<span class="sc">/</span>en_AU.UTF<span class="dv">-8</span><span class="sc">/</span>en_AU.UTF<span class="dv">-8</span></span>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>attached base packages<span class="sc">:</span></span>
+<span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] stats     graphics  grDevices utils     datasets  methods   base     </span>
+<span id="cb58-15"><a href="#cb58-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-16"><a href="#cb58-16" aria-hidden="true" tabindex="-1"></a>other attached packages<span class="sc">:</span></span>
+<span id="cb58-17"><a href="#cb58-17" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] limma_3.<span class="fl">52.1</span>     protDP_0.<span class="fl">1.0</span>     forcats_0.<span class="fl">5.1</span>    stringr_1.<span class="fl">4.0</span>    dplyr_1.<span class="fl">0.9</span>     </span>
+<span id="cb58-18"><a href="#cb58-18" aria-hidden="true" tabindex="-1"></a> [<span class="dv">6</span>] purrr_0.<span class="fl">3.4</span>      readr_2.<span class="fl">1.2</span>      tidyr_1.<span class="fl">2.0</span>      tibble_3.<span class="fl">1.7</span>     ggplot2_3.<span class="fl">3.6</span>   </span>
+<span id="cb58-19"><a href="#cb58-19" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span>] tidyverse_1.<span class="fl">3.1</span>  BiocStyle_2.<span class="fl">24.0</span></span>
+<span id="cb58-20"><a href="#cb58-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-21"><a href="#cb58-21" aria-hidden="true" tabindex="-1"></a>loaded via a <span class="fu">namespace</span> (and not attached)<span class="sc">:</span></span>
+<span id="cb58-22"><a href="#cb58-22" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] lubridate_1.<span class="fl">8.0</span>     assertthat_0.<span class="fl">2.1</span>    rprojroot_2.<span class="fl">0.3</span>     digest_0.<span class="fl">6.29</span>      </span>
+<span id="cb58-23"><a href="#cb58-23" aria-hidden="true" tabindex="-1"></a> [<span class="dv">5</span>] utf8_1.<span class="fl">2.2</span>          R6_2.<span class="fl">5.1</span>            cellranger_1.<span class="fl">1.0</span>    backports_1.<span class="fl">4.1</span>    </span>
+<span id="cb58-24"><a href="#cb58-24" aria-hidden="true" tabindex="-1"></a> [<span class="dv">9</span>] reprex_2.<span class="fl">0.1</span>        evaluate_0<span class="fl">.15</span>       highr_0<span class="fl">.9</span>           httr_1.<span class="fl">4.3</span>         </span>
+<span id="cb58-25"><a href="#cb58-25" aria-hidden="true" tabindex="-1"></a>[<span class="dv">13</span>] pillar_1.<span class="fl">7.0</span>        rlang_1.<span class="fl">0.2</span>         readxl_1.<span class="fl">4.0</span>        rstudioapi_0<span class="fl">.13</span>    </span>
+<span id="cb58-26"><a href="#cb58-26" aria-hidden="true" tabindex="-1"></a>[<span class="dv">17</span>] jquerylib_0.<span class="fl">1.4</span>     rmarkdown_2<span class="fl">.14</span>      pkgdown_2.<span class="fl">0.3</span>       labeling_0.<span class="fl">4.2</span>     </span>
+<span id="cb58-27"><a href="#cb58-27" aria-hidden="true" tabindex="-1"></a>[<span class="dv">21</span>] splines_4.<span class="fl">2.0</span>       textshaping_0.<span class="fl">3.6</span>   desc_1.<span class="fl">4.1</span>          munsell_0.<span class="fl">5.0</span>      </span>
+<span id="cb58-28"><a href="#cb58-28" aria-hidden="true" tabindex="-1"></a>[<span class="dv">25</span>] broom_0.<span class="fl">8.0</span>         compiler_4.<span class="fl">2.0</span>      modelr_0.<span class="fl">1.8</span>        xfun_0<span class="fl">.31</span>          </span>
+<span id="cb58-29"><a href="#cb58-29" aria-hidden="true" tabindex="-1"></a>[<span class="dv">29</span>] pkgconfig_2.<span class="fl">0.3</span>     systemfonts_1.<span class="fl">0.4</span>   htmltools_0.<span class="fl">5.2</span>     tidyselect_1.<span class="fl">1.2</span>   </span>
+<span id="cb58-30"><a href="#cb58-30" aria-hidden="true" tabindex="-1"></a>[<span class="dv">33</span>] gridExtra_2<span class="fl">.3</span>       bookdown_0<span class="fl">.26</span>       fansi_1.<span class="fl">0.3</span>         crayon_1.<span class="fl">5.1</span>       </span>
+<span id="cb58-31"><a href="#cb58-31" aria-hidden="true" tabindex="-1"></a>[<span class="dv">37</span>] tzdb_0.<span class="fl">3.0</span>          dbplyr_2.<span class="fl">1.1</span>        withr_2.<span class="fl">5.0</span>         grid_4.<span class="fl">2.0</span>         </span>
+<span id="cb58-32"><a href="#cb58-32" aria-hidden="true" tabindex="-1"></a>[<span class="dv">41</span>] jsonlite_1.<span class="fl">8.0</span>      gtable_0.<span class="fl">3.0</span>        lifecycle_1.<span class="fl">0.1</span>     DBI_1.<span class="fl">1.2</span>          </span>
+<span id="cb58-33"><a href="#cb58-33" aria-hidden="true" tabindex="-1"></a>[<span class="dv">45</span>] magrittr_2.<span class="fl">0.3</span>      scales_1.<span class="fl">2.0</span>        cli_3.<span class="fl">3.0</span>           stringi_1.<span class="fl">7.6</span>      </span>
+<span id="cb58-34"><a href="#cb58-34" aria-hidden="true" tabindex="-1"></a>[<span class="dv">49</span>] cachem_1.<span class="fl">0.6</span>        farver_2.<span class="fl">1.0</span>        fs_1.<span class="fl">5.2</span>            xml2_1.<span class="fl">3.3</span>         </span>
+<span id="cb58-35"><a href="#cb58-35" aria-hidden="true" tabindex="-1"></a>[<span class="dv">53</span>] bslib_0.<span class="fl">3.1</span>         ellipsis_0.<span class="fl">3.2</span>      ragg_1.<span class="fl">2.2</span>          generics_0.<span class="fl">1.2</span>     </span>
+<span id="cb58-36"><a href="#cb58-36" aria-hidden="true" tabindex="-1"></a>[<span class="dv">57</span>] vctrs_0.<span class="fl">4.1</span>         RColorBrewer_1<span class="fl">.1</span><span class="dv">-3</span>  tools_4.<span class="fl">2.0</span>         glue_1.<span class="fl">6.2</span>         </span>
+<span id="cb58-37"><a href="#cb58-37" aria-hidden="true" tabindex="-1"></a>[<span class="dv">61</span>] hms_1.<span class="fl">1.1</span>           fastmap_1.<span class="fl">1.0</span>       yaml_2.<span class="fl">3.5</span>          colorspace_2<span class="fl">.0</span><span class="dv">-3</span>   </span>
+<span id="cb58-38"><a href="#cb58-38" aria-hidden="true" tabindex="-1"></a>[<span class="dv">65</span>] BiocManager_1.<span class="fl">30.18</span> rvest_1.<span class="fl">0.2</span>         memoise_2.<span class="fl">0.1</span>       knitr_1<span class="fl">.39</span>         </span>
+<span id="cb58-39"><a href="#cb58-39" aria-hidden="true" tabindex="-1"></a>[<span class="dv">69</span>] haven_2.<span class="fl">5.0</span>         sass_0.<span class="fl">4.1</span>         </span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

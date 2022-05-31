@@ -6,7 +6,8 @@
 #' @param wt A vector of the numbers of trials (samples size).
 #' @param df Degrees of freedom for the natural cubic spline.
 #'
-#' @return A list of fitted coefficients and the basis matrix for the spline.
+#' @return A list of fitted coefficients and the basis matrix for a spline with
+#' some degrees of freedom.
 #' @export
 #'
 #' @examples

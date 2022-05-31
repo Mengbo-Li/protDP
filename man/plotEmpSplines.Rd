@@ -2,7 +2,8 @@
 % Please edit documentation in R/plotEmpSplines.R
 \name{plotEmpSplines}
 \alias{plotEmpSplines}
-\title{Plot a fitted empirical spline fit on detected proportions}
+\title{Plot the fitted empirical spline of detected proportions to average observed
+intensities}
 \usage{
 plotEmpSplines(
   nuis,
@@ -52,7 +53,8 @@ axis.}
 \item{ylim}{Limits of the y-axis.}
 }
 \description{
-Plot a fitted empirical spline fit on detected proportions
+Plot the fitted empirical spline of detected proportions to average observed
+intensities
 }
 \examples{
 # See the vignettes.
