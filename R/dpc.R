@@ -18,7 +18,7 @@ dpc <- function(nuis, maxit = 100, eps = 1e-4, b1.upper = 1) {
   mu_obs <- nuis$mu_obs
   mu_mis <- mu_obs - nuis$betaStart[2]*s2
   betas <- nuis$betaStart
-  betas.hist <- betas
+  betas.hist <- matrix(betas, nrow = 1)
   negLL <- dpc_ztbinom.negLL(betas, dp, wt, mu_obs, mu_mis)
   negLL.hist <- negLL
   for (i in 1:maxit) {
