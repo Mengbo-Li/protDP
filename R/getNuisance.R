@@ -16,17 +16,16 @@
 #'
 #' @examples
 #' ## NOT RUN
-#'
+#' @importFrom limma eBayes
+#' @importFrom limma lmFit
 #' @export
-
 getNuisance <- function(Y) {
   wt <- rep(ncol(Y), nrow(Y))
   dp <- rowMeans(!is.na(Y))
   mu_obs <- rowMeans(Y, na.rm = TRUE)
-  require(limma)
-  fit0 <- eBayes(lmFit(Y, design = matrix(1, nrow = ncol(Y))), trend = TRUE)
+  fit0 <- limma::eBayes(lmFit(Y, design = matrix(1, nrow = ncol(Y))), trend = TRUE)
   s2 <- fit0$s2.prior
-  glmfit0 <- glm(dp ~ mu_obs, weight = wt, family = binomial)
+  glmfit0 <- glm(dp ~ mu_obs, weights = wt, family = binomial)
   betaStart <- as.numeric(coef(glmfit0))
   return(list(wt = wt,
               dp = dp,

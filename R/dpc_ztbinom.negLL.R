@@ -7,6 +7,6 @@ dpc_ztbinom.negLL <- function(params, dp, wt, mu_obs, mu_mis) {
   b1 <- params[2]
   eta <- b0 + 0.5*b1*(mu_obs + mu_mis)
   p <- plogis(eta)
-  -sum(dbinom(dp*wt, size = wt, p = p, log = TRUE) -
-         pbinom(0.5, size = wt, p = p, log.p = TRUE, lower.tail = FALSE))
+  -sum(dbinom(dp*wt, size = wt, prob = p, log = TRUE) -
+         pbinom(0.5, size = wt, prob = p, log.p = TRUE, lower.tail = FALSE))
 }

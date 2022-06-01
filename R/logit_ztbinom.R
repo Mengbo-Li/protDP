@@ -7,11 +7,10 @@
 #' @param beta0 Start values for the beta coefficients.
 #'
 #' @return Fitted beta coefficients and the fitting history.
-#'
-#' @export
-#'
 #' @examples
 #' ## See the vignettes.
+#' @importFrom stats optim pbinom dbinom binomial coef glm pbeta plogis qlogis
+#' @export
 logit_ztbinom <- function(dp, X, wt, beta0) {
 
   df <- length(beta0) - 1
@@ -25,7 +24,7 @@ logit_ztbinom <- function(dp, X, wt, beta0) {
   lower.bounds <- c(-Inf, rep(0, df))
   if (df > 0) upper.bounds <- c(0, rep(Inf, df))
   else upper.bounds <- c(Inf)
-  ztbinomFit <- optim(params,
+  ztbinomFit <- stats::optim(params,
                       logit_ztbinom.ZT_negLL,
                       dp = dp, wt = wt, X = X,
                       method = "L-BFGS-B",

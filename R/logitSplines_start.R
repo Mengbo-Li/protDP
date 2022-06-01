@@ -8,18 +8,19 @@
 #'
 #' @return A list of fitted coefficients and the basis matrix for a spline with
 #' some degrees of freedom.
-#' @export
 #'
 #' @examples
 #' # See the vignettes.
+#' @importFrom splines ns
+#' @export
 logitSplines_start <- function(dp, mu, wt, df = 1) {
   if (df == 0) {
-    fit <- glm(dp ~ 1, weight = wt, family = binomial)
+    fit <- glm(dp ~ 1, weights = wt, family = binomial)
     X <- matrix(1, nrow = length(dp), ncol = 1)
   }
   else {
     X <- splines::ns(mu, df = df)
-    fit <- glm(dp ~ X, weight = wt, family = binomial)
+    fit <- glm(dp ~ X, weights = wt, family = binomial)
   }
   names(fit$coefficients) <- paste("b", 0:df, sep = "")
   list(betas_start = fit$coefficients, X = X)

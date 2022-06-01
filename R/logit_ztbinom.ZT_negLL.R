@@ -6,6 +6,6 @@ logit_ztbinom.ZT_negLL <- function(params, dp, wt, X) {
   if (df > 0) X <- cbind(1, X)
   eta <- colSums(t(X) * params)
   p <- plogis(eta)
-  -sum(dbinom(dp*wt, size = wt, p = p, log = TRUE) -
-         pbinom(0.5, size = wt, p = p, log.p = TRUE, lower.tail = FALSE))
+  -sum(dbinom(dp*wt, size = wt, prob = p, log = TRUE) -
+         pbinom(0.5, size = wt, prob = p, log.p = TRUE, lower.tail = FALSE))
 }

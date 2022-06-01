@@ -36,13 +36,6 @@ gatherResults <- function(data) {
                                2*min(i$info[, "neg.LL"]))))
   devs$dev.decre <- baselineDev - devs$dev
   devs$percDevReduced = devs$dev.decre / max(devs$dev.decre)
-  devPlot <- ggplot(slice(devs, 2:4), aes(x = df, y = percDevReduced)) +
-    geom_point() +
-    geom_line() +
-    geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
-    scale_x_continuous(breaks = c(1, 3, 5)) +
-    labs(x = "DF", y = "Deviance% reduced") +
-    theme_classic()
   # next the capped logit-linear fit
   cappedLinear_params0 <- splineFits_params0[[1]]
   cappedLinearFit <- cappedLogit_ztbinom(dp = nuis$dp, X = cappedLinear_params0$X,
@@ -50,11 +43,11 @@ gatherResults <- function(data) {
                                          beta0 = cappedLinear_params0$betas_start,
                                          trace = FALSE)
   # Detection probability curve assuming normal observed intensities
-  dpcFit <- dpc(data, nuis)
+  dpcFit <- dpc(nuis)
   return(list(nuis = nuis,
               splineFits_params0 = splineFits_params0,
               splineFits = splineFits,
-              devs = devs, devPlot = devPlot,
+              devs = devs,
               cappedLinearFit = cappedLinearFit,
               dpcFit = dpcFit))
 }

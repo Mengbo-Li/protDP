@@ -9,6 +9,6 @@ cappedZT_negLL_givenAlpha <- function(params, dp, wt, X, alpha) {
    eta <- colSums(t(X) * betas)
    p <- alpha * plogis(eta)
    # negative log-liklihood under zt-binom, to minimise in optim
-   -sum(dbinom(dp*wt, size = wt, p = p, log = TRUE) -
-           pbinom(0.5, size = wt, p = p, log.p = TRUE, lower.tail = FALSE))
+   -sum(dbinom(dp*wt, size = wt, prob = p, log = TRUE) -
+           pbinom(0.5, size = wt, prob = p, log.p = TRUE, lower.tail = FALSE))
 }

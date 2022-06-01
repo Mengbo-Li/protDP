@@ -43,4 +43,5 @@ capped probabilities
 }
 \examples{
 ## See the vignettes.
+
 }

@@ -16,6 +16,7 @@
 #'
 #' @examples
 #' ## See the vignettes.
+#'
 cappedLogit_ztbinom <- function(dp, X, wt, alpha0 = 0.8, beta0, maxit = 100,
                                 trace = TRUE, eps = 1e-4) {
 
@@ -27,7 +28,7 @@ cappedLogit_ztbinom <- function(dp, X, wt, alpha0 = 0.8, beta0, maxit = 100,
   if (df > 0) upper.bounds <- c(0, rep(Inf, df))
   else upper.bounds <- c(Inf)
   # MLE for betas at the start value of alpha0
-  ztbinomFit <- optim(beta0, cappedZT_negLL_givenAlpha,
+  ztbinomFit <- stats::optim(beta0, cappedZT_negLL_givenAlpha,
                       dp = dp, wt = wt, X = X, alpha = alpha,
                       method = "L-BFGS-B",
                       lower = lower.bounds, upper = upper.bounds)
@@ -49,7 +50,7 @@ cappedLogit_ztbinom <- function(dp, X, wt, alpha0 = 0.8, beta0, maxit = 100,
       alpha <- 1
       if (trace)
         cat(paste("alpha_", i, sep = ""), "=", alpha, "\n")
-      ztbinomFit <- optim(betas, cappedZT_negLL_givenAlpha,
+      ztbinomFit <- stats::optim(betas, cappedZT_negLL_givenAlpha,
                           dp = dp, wt = wt, X = X, alpha = alpha, method = "L-BFGS-B",
                           lower = lower.bounds, upper = upper.bounds)
       newBetas <- ztbinomFit$par
@@ -65,7 +66,7 @@ cappedLogit_ztbinom <- function(dp, X, wt, alpha0 = 0.8, beta0, maxit = 100,
     if (trace)
       cat(paste("alpha_", i, sep = ""), "=", newAlpha,
           "\n")
-    ztbinomFit <- optim(betas, cappedZT_negLL_givenAlpha,
+    ztbinomFit <- stats::optim(betas, cappedZT_negLL_givenAlpha,
                         dp = dp, wt = wt, X = X, alpha = newAlpha, method = "L-BFGS-B",
                         lower = lower.bounds, upper = upper.bounds)
     newBetas <- ztbinomFit$par

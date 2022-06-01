@@ -25,5 +25,4 @@ precursor.
 }
 \examples{
 ## NOT RUN
-
 }

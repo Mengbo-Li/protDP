@@ -5,12 +5,9 @@
 \title{Detection probability curve for mass spectrometry-based proteomics data
 assuming observed normal intensities}
 \usage{
-dpc(Y, nuis, maxit = 100, eps = 1e-04, b1.upper = 1)
+dpc(nuis, maxit = 100, eps = 1e-04, b1.upper = 1)
 }
 \arguments{
-\item{Y}{The log2-transformed intensity matrix where rows are precursors and
-columns are samples.}
-
 \item{nuis}{The list of nuisance parameters.}
 
 \item{maxit}{Maximum number of iterations.}

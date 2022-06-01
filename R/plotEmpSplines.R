@@ -21,6 +21,8 @@
 #'
 #' @examples
 #' # See the vignettes.
+#' @importFrom graphics legend
+#' @importFrom graphics lines
 plotEmpSplines <- function(nuis, X, params,
                            capped = TRUE, logit = FALSE,
                            add.jitter = TRUE, jitter.amount = NULL,

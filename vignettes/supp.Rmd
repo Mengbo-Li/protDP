@@ -6,6 +6,10 @@ author:
 output:
   BiocStyle::html_document:
     toc_float: true
+vignette: >
+  %\VignetteIndexEntry{Supplementary results and figures}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 package: BiocStyle
 bibliography: protDP.bib
 editor_options: 
@@ -33,7 +37,7 @@ knitr::opts_chunk$set(collapse = TRUE,
 
 # Overview
 
-On this page, the analysis workflow presented in the main text is applied on each of the four example datasets on the protein group level. Additionally, two more datasets were downloaded and the same analysis are performed on both precursor- and protein-levels. 
+On this page, the analysis workflow presented in the main text is applied on each of the four example datasets on the protein group level. Additionally, two more datasets were downloaded. The same analyses are also performed on both precursor- and protein-levels on these additional datasets. 
 
 # Load packages
 
@@ -87,8 +91,14 @@ legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 
 ## Reduced deviance compared to an intercept model
 
 ```{r, fig.width = 6, fig.height = 4}
-hyeProt$devPlot + 
-  ylim(0.90, 1)
+ggplot(slice(hyeProt$devs, 2:4), aes(x = df, y = percDevReduced)) +
+  geom_point() +
+  geom_line() +
+  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  scale_x_continuous(breaks = c(1, 3, 5)) +
+  labs(x = "d.f.", y = "Reduced deviance(%)") +
+  ylim(0.90, 1) + 
+  theme_classic()
 ```
 
 
@@ -172,7 +182,14 @@ legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 
 ## Reduced deviance compared to an intercept model
 
 ```{r, fig.width = 6, fig.height = 4}
-scProt$devPlot + ylim(0.90, 1)
+ggplot(slice(scProt$devs, 2:4), aes(x = df, y = percDevReduced)) +
+  geom_point() +
+  geom_line() +
+  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  scale_x_continuous(breaks = c(1, 3, 5)) +
+  labs(x = "d.f.", y = "Reduced deviance(%)") +
+  ylim(0.90, 1) + 
+  theme_classic()
 ```
 
 
@@ -195,7 +212,7 @@ round(scProt$cappedLinearFit$params, 2)
 ## Detection probability curve assuming normal observed intensities
 
 ```{r}
-scProt_dpcFit <- dpc(diannSubset, nuis = scProt$nuis, b1.upper = Inf)
+scProt_dpcFit <- dpc(nuis = scProt$nuis, b1.upper = Inf)
 plotDPC(scProt$nuis, scProt_dpcFit, add.jitter = FALSE, point.cex = 0.15)
 ```
 
@@ -254,7 +271,14 @@ legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 
 ## Reduced deviance compared to an intercept model
 
 ```{r, fig.width = 6, fig.height = 4}
-hepg2Prot$devPlot + ylim(0.90, 1)
+ggplot(slice(hepg2Prot$devs, 2:4), aes(x = df, y = percDevReduced)) +
+  geom_point() +
+  geom_line() +
+  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  scale_x_continuous(breaks = c(1, 3, 5)) +
+  labs(x = "d.f.", y = "Reduced deviance(%)") +
+  ylim(0.90, 1) + 
+  theme_classic()
 ```
 
 
@@ -335,7 +359,14 @@ legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 
 ## Reduced deviance compared to an intercept model
 
 ```{r, fig.width = 6, fig.height = 4}
-ddaPlasmaProt$devPlot + ylim(0.90, 1)
+ggplot(slice(ddaPlasmaProt$devs, 2:4), aes(x = df, y = percDevReduced)) +
+  geom_point() +
+  geom_line() +
+  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  scale_x_continuous(breaks = c(1, 3, 5)) +
+  labs(x = "d.f.", y = "Reduced deviance(%)") +
+  ylim(0.90, 1) + 
+  theme_classic()
 ```
 
 
@@ -432,10 +463,24 @@ for (res_i in 1:2) {
 ## Reduced deviance compared to an intercept model
 
 ```{r, fig.width = 12, fig.height = 4}
-devPlot1 <- res[[1]]$devPlot + 
-  ylim(0.90, 1) + ggtitle("Precursor-level")
-devPlot2 <- res[[2]]$devPlot + 
-  ylim(0.90, 1) + ggtitle("Protein-level")
+devPlot1 <- ggplot(slice(res[[1]]$devs, 2:4), aes(x = df, y = percDevReduced)) +
+  geom_point() +
+  geom_line() +
+  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  scale_x_continuous(breaks = c(1, 3, 5)) +
+  labs(x = "d.f.", y = "Reduced deviance(%)") +
+  ylim(0.90, 1) + 
+  theme_classic() + 
+  ggtitle("Precursor-level")
+devPlot2 <- ggplot(slice(res[[2]]$devs, 2:4), aes(x = df, y = percDevReduced)) +
+  geom_point() +
+  geom_line() +
+  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  scale_x_continuous(breaks = c(1, 3, 5)) +
+  labs(x = "d.f.", y = "Reduced deviance(%)") +
+  ylim(0.90, 1) + 
+  theme_classic() + 
+  ggtitle("Protein-level")
 gridExtra::grid.arrange(devPlot1, devPlot2, ncol = 2)
 ```
 
@@ -556,13 +601,28 @@ for (res_i in 1:2) {
 ## Reduced deviance compared to an intercept model
 
 ```{r, fig.width = 12, fig.height = 4}
-devPlot1 <- res[[1]]$devPlot + 
-  ylim(0.90, 1) + ggtitle("Precursor-level")
-devPlot2 <- res[[2]]$devPlot + 
-  ylim(0.90, 1) + ggtitle("Protein-level")
+devPlot1 <- ggplot(slice(res[[1]]$devs, 2:4), aes(x = df, y = percDevReduced)) +
+  geom_point() +
+  geom_line() +
+  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  scale_x_continuous(breaks = c(1, 3, 5)) +
+  labs(x = "d.f.", y = "Reduced deviance(%)") +
+  ylim(0.90, 1) + 
+  theme_classic() + 
+  ggtitle("Precursor-level")
+devPlot2 <- ggplot(slice(res[[2]]$devs, 2:4), aes(x = df, y = percDevReduced)) +
+  geom_point() +
+  geom_line() +
+  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  scale_x_continuous(breaks = c(1, 3, 5)) +
+  labs(x = "d.f.", y = "Reduced deviance(%)") +
+  ylim(0.90, 1) + 
+  theme_classic() + 
+  ggtitle("Protein-level")
 gridExtra::grid.arrange(devPlot1, devPlot2, ncol = 2)
 ```
 
+The spline with 1 degree of freedom contributes the majority to the total amount of reduced deviance in both precursor- and protein group-level data. 
 
 ## Empirical logit-linear curve with capped probabilities
 
@@ -606,13 +666,13 @@ for (res_i in 1:2) {
 }
 ```
 
-With estimated parameters for the fitted d on precursor-level data being:
+With estimated parameters for the fitted detection probability curve for precursor-level data being:
 
 ```{r}
 round(res$prec$dpcFit$beta, 2)
 ```
 
-and estimated parameters on protein-level data being:
+and estimated parameters for the fitted detection probability curve for the protein group-level data being:
 
 ```{r}
 round(res$prot$dpcFit$beta, 2)

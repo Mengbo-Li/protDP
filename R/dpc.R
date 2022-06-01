@@ -1,8 +1,6 @@
 #' Detection probability curve for mass spectrometry-based proteomics data
 #' assuming observed normal intensities
 #'
-#' @param Y The log2-transformed intensity matrix where rows are precursors and
-#' columns are samples.
 #' @param nuis The list of nuisance parameters.
 #' @param maxit Maximum number of iterations.
 #' @param eps Convergence tolerance.
@@ -13,7 +11,7 @@
 #'
 #' @examples
 #' ## See the vignettes.
-dpc <- function(Y, nuis, maxit = 100, eps = 1e-4, b1.upper = 1, b0.upper = 0) {
+dpc <- function(nuis, maxit = 100, eps = 1e-4, b1.upper = 1) {
   dp <- nuis$dp
   wt <- nuis$wt
   s2 <- nuis$s2
@@ -24,11 +22,11 @@ dpc <- function(Y, nuis, maxit = 100, eps = 1e-4, b1.upper = 1, b0.upper = 0) {
   negLL <- dpc_ztbinom.negLL(betas, dp, wt, mu_obs, mu_mis)
   negLL.hist <- negLL
   for (i in 1:maxit) {
-    ztbinomFit <- optim(betas, dpc_ztbinom.negLL,
+    ztbinomFit <- stats::optim(betas, dpc_ztbinom.negLL,
                         dp = dp, wt = wt,
                         mu_obs = mu_obs, mu_mis = mu_mis,
                         method = "L-BFGS-B", lower = c(-Inf, 0),
-                        upper = c(b0.upper, b1.upper))
+                        upper = c(0, b1.upper))
     newBetas <- ztbinomFit$par
     mu_mis <- mu_obs - newBetas[2]*s2
     newNegLL <- dpc_ztbinom.negLL(newBetas, dp, wt, mu_obs, mu_mis)
