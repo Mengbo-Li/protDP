@@ -1,4 +1,4 @@
-#' Detection probability curve for mass spectrometry-based proteomics data
+#' Detection probability curve for label free shotgun proteomics data
 #' assuming observed normal intensities
 #'
 #' @param nuis The list of nuisance parameters.

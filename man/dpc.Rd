@@ -2,7 +2,7 @@
 % Please edit documentation in R/dpc.R
 \name{dpc}
 \alias{dpc}
-\title{Detection probability curve for mass spectrometry-based proteomics data
+\title{Detection probability curve for label free shotgun proteomics data
 assuming observed normal intensities}
 \usage{
 dpc(nuis, maxit = 100, eps = 1e-04, b1.upper = 1)
@@ -20,7 +20,7 @@ dpc(nuis, maxit = 100, eps = 1e-04, b1.upper = 1)
 Fitted parameters and the fitting history.
 }
 \description{
-Detection probability curve for mass spectrometry-based proteomics data
+Detection probability curve for label free shotgun proteomics data
 assuming observed normal intensities
 }
 \examples{
