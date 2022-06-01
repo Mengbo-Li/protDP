@@ -660,7 +660,7 @@ par(mfrow = c(2, 1))
 for (res_i in 1:2) {
   eachRes <- res[[res_i]]
   plotDPC(eachRes$nuis, eachRes$dpcFit, jitter.amount = 1/ncol(usp1_prec)/2, 
-          point.cex = 0.15)
+          point.cex = 0.15, ylim = c(0, 1.08))
   title(sub = c("Precursor-level", "Protein-level")[res_i])
 }
 ```
