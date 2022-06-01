@@ -4,13 +4,12 @@ author:
 - name: Mengbo Li
   affiliation: Bioinformatics Division, WEHI
 output:
-  BiocStyle::html_document:
+  html_document:
     toc_float: true
 vignette: >
   %\VignetteIndexEntry{Supplementary results and figures}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-package: BiocStyle
 bibliography: protDP.bib
 editor_options: 
   chunk_output_type: console
