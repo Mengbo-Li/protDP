@@ -2,6 +2,8 @@
 #'
 #' @param data The log2-transformed intensity matrix where rows are precursors
 #' and columns are samples.
+#' @param b1.upper Upper bound for beta_1 when fitting the detection probability
+#' curve. Typically 1.
 #'
 #' @return List of results including the logistic-spline fits, the deviance
 #' partitioning plot, the capped logit-linear fit and the fitted detection
@@ -11,7 +13,7 @@
 #' ## See the vignettes.
 #'
 #' @export
-gatherResults <- function(data) {
+gatherResults <- function(data, b1.upper = 1) {
   nuis <- getNuisance(data)
   # first get all logistic-splines fits
   splineFits <- list()
@@ -43,7 +45,7 @@ gatherResults <- function(data) {
                                          beta0 = cappedLinear_params0$betas_start,
                                          trace = FALSE)
   # Detection probability curve assuming normal observed intensities
-  dpcFit <- dpc(nuis)
+  dpcFit <- dpc(nuis, b1.upper = b1.upper)
   return(list(nuis = nuis,
               splineFits_params0 = splineFits_params0,
               splineFits = splineFits,

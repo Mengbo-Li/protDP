@@ -187,7 +187,7 @@ groups. The log2-transformation is first applied to LFQ intensities.</p>
 <h3 id="empirical-logistic-splines-for-detected-proportions-1">Empirical logistic splines for detected proportions<a class="anchor" aria-label="anchor" href="#empirical-logistic-splines-for-detected-proportions-1"></a>
 </h3>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scProt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">scProt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">dat</span>, b1.upper <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span>
 <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">dfList</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
     <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>
         <span class="fu"><a href="../reference/plotEmpSplines.html">plotEmpSplines</a></span><span class="op">(</span><span class="va">scProt</span><span class="op">$</span><span class="va">nuis</span>, X <span class="op">=</span> <span class="va">scProt</span><span class="op">$</span><span class="va">splineFits_params0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">X</span>,
@@ -231,11 +231,10 @@ groups. The log2-transformation is first applied to LFQ intensities.</p>
 intensities<a class="anchor" aria-label="anchor" href="#detection-probability-curve-assuming-normal-observed-intensities-1"></a>
 </h3>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scProt_dpcFit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dpc.html">dpc</a></span><span class="op">(</span>nuis <span class="op">=</span> <span class="va">scProt</span><span class="op">$</span><span class="va">nuis</span>, b1.upper <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span>
-<span class="fu"><a href="../reference/plotDPC.html">plotDPC</a></span><span class="op">(</span><span class="va">scProt</span><span class="op">$</span><span class="va">nuis</span>, <span class="va">scProt_dpcFit</span>, add.jitter <span class="op">=</span> <span class="cn">FALSE</span>, point.cex <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plotDPC.html">plotDPC</a></span><span class="op">(</span><span class="va">scProt</span><span class="op">$</span><span class="va">nuis</span>, <span class="va">scProt</span><span class="op">$</span><span class="va">dpcFit</span>, add.jitter <span class="op">=</span> <span class="cn">FALSE</span>, point.cex <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span></code></pre></div>
 <p><img src="supp_files/figure-html/unnamed-chunk-16-1.png" width="768"></p>
 <p>Parameters of the detection probability curve are as follows:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(scProt_dpcFit<span class="sc">$</span>beta, <span class="dv">2</span>)</span>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(scProt<span class="sc">$</span>dpcFit<span class="sc">$</span>beta, <span class="dv">2</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="sc">-</span><span class="fl">12.9</span>   <span class="fl">1.2</span></span></code></pre></div>
 <p><br><br><br><br></p>
 </div>

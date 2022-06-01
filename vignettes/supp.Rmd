@@ -161,7 +161,7 @@ sum(is.na(dat)) / length(dat)
 ## Empirical logistic splines for detected proportions
 
 ```{r}
-scProt <- gatherResults(dat)
+scProt <- gatherResults(dat, b1.upper = Inf)
 for (i in 1:length(dfList)) {
   if (i == 1)
     plotEmpSplines(scProt$nuis, X = scProt$splineFits_params0[[i]]$X, 
@@ -211,16 +211,14 @@ round(scProt$cappedLinearFit$params, 2)
 ## Detection probability curve assuming normal observed intensities
 
 ```{r}
-scProt_dpcFit <- dpc(nuis = scProt$nuis, b1.upper = Inf)
-plotDPC(scProt$nuis, scProt_dpcFit, add.jitter = FALSE, point.cex = 0.15)
+plotDPC(scProt$nuis, scProt$dpcFit, add.jitter = FALSE, point.cex = 0.15)
 ```
 
 Parameters of the detection probability curve are as follows: 
 
 ```{r}
-round(scProt_dpcFit$beta, 2)
+round(scProt$dpcFit$beta, 2)
 ```
-
 
 
 <br>
@@ -308,6 +306,8 @@ Parameters of the detection probability curve are
 ```{r}
 round(hepg2Prot$dpcFit$beta, 2)
 ```
+
+
 
 
 <br>

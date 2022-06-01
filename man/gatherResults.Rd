@@ -4,11 +4,14 @@
 \alias{gatherResults}
 \title{Wrapper function of all presented results}
 \usage{
-gatherResults(data)
+gatherResults(data, b1.upper = 1)
 }
 \arguments{
 \item{data}{The log2-transformed intensity matrix where rows are precursors
 and columns are samples.}
+
+\item{b1.upper}{Upper bound for beta_1 when fitting the detection probability
+curve. Typically 1.}
 }
 \value{
 List of results including the logistic-spline fits, the deviance
