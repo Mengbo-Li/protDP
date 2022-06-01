@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">protDP</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,7 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="fit-an-empirical-logistic-spline">Fit an empirical logistic spline<a class="anchor" aria-label="anchor" href="#fit-an-empirical-logistic-spline"></a></h2>
       
       
 
@@ -53,11 +53,94 @@
 
       <dl><dt>
           
+          <code><a href="logitSplines_start.html">logitSplines_start()</a></code> 
+        </dt>
+        <dd>Get the initial estimates for a logistic spline fit by assuming the
+binomial detection probability</dd>
+      </dl><dl><dt>
+          
+          <code><a href="logit_ztbinom.html">logit_ztbinom()</a></code> 
+        </dt>
+        <dd>Fitting an empirical logistic spline curve for detection proportion</dd>
+      </dl><dl><dt>
+          
           <code><a href="cappedLogit_ztbinom.html">cappedLogit_ztbinom()</a></code> 
         </dt>
         <dd>Fitting an empirical logistic spline curve for detection proportion with
 capped probabilities</dd>
+      </dl></div><div class="section level2">
+      <h2 id="fit-a-detection-probability-curve">Fit a detection probability curve<a class="anchor" aria-label="anchor" href="#fit-a-detection-probability-curve"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="dpc.html">dpc()</a></code> 
+        </dt>
+        <dd>Detection probability curve for mass spectrometry-based proteomics data
+assuming observed normal intensities</dd>
+      </dl></div><div class="section level2">
+      <h2 id="plot-a-fitted-curve">Plot a fitted curve<a class="anchor" aria-label="anchor" href="#plot-a-fitted-curve"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="plotEmpSplines.html">plotEmpSplines()</a></code> 
+        </dt>
+        <dd>Plot the fitted empirical spline of detected proportions to average observed
+intensities</dd>
       </dl><dl><dt>
+          
+          <code><a href="plotDPC.html">plotDPC()</a></code> 
+        </dt>
+        <dd>Plot the detection probability curve</dd>
+      </dl></div><div class="section level2">
+      <h2 id="supporting-functions">Supporting functions<a class="anchor" aria-label="anchor" href="#supporting-functions"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="getNuisance.html">getNuisance()</a></code> 
+        </dt>
+        <dd>Get nuisance parameters and an initial estimation of the detection
+probability curve (DPC)</dd>
+      </dl><dl><dt>
+          
+          <code><a href="gatherResults.html">gatherResults()</a></code> 
+        </dt>
+        <dd>Wrapper function of all presented results</dd>
+      </dl></div><div class="section level2">
+      <h2 id="datasets">Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="datasetA.html">datasetA</a></code> 
         </dt>
@@ -79,55 +162,17 @@ capped probabilities</dd>
         <dd>Dataset D: Human blood plasma proteome</dd>
       </dl><dl><dt>
           
-          <code><a href="dpc.html">dpc()</a></code> 
+          <code><a href="shbheart.html">shbheart</a></code> 
         </dt>
-        <dd>Detection probability curve for mass spectrometry-based proteomics data
-assuming observed normal intensities</dd>
-      </dl><dl><dt>
-          
-          <code><a href="gatherResults.html">gatherResults()</a></code> 
-        </dt>
-        <dd>Wrapper function of all presented results</dd>
-      </dl><dl><dt>
-          
-          <code><a href="getNuisance.html">getNuisance()</a></code> 
-        </dt>
-        <dd>Get nuisance parameters and an initial estimation of the detection
-probability curve (DPC)</dd>
-      </dl><dl><dt>
-          
-          <code><a href="logitSplines_start.html">logitSplines_start()</a></code> 
-        </dt>
-        <dd>Get the initial estimates for a logistic spline fit by assuming the
-binomial detection probability</dd>
-      </dl><dl><dt>
-          
-          <code><a href="logit_ztbinom.html">logit_ztbinom()</a></code> 
-        </dt>
-        <dd>Fitting an empirical logistic spline curve for detection proportion</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plotDPC.html">plotDPC()</a></code> 
-        </dt>
-        <dd>Plot the detection probability curve</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plotEmpSplines.html">plotEmpSplines()</a></code> 
-        </dt>
-        <dd>Plot the fitted empirical spline of detected proportions to average observed
-intensities</dd>
+        <dd>Supplementary Dataset: Sydney Heart Bank data</dd>
       </dl><dl><dt>
           
           <code><a href="ratio2.5.html">ratio2.5</a></code> 
         </dt>
         <dd>Supplementary Dataset : UPS1 spiked in yeast extract</dd>
-      </dl><dl><dt>
-          
-          <code><a href="shbheart.html">shbheart</a></code> 
-        </dt>
-        <dd>Supplementary Dataset: Sydney Heart Bank data</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

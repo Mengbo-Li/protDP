@@ -9,3 +9,30 @@ navbar:
     articles:
       text: Supplementary results
       href: articles/supp.html
+reference:
+- title: Fit an empirical logistic spline
+  contents:
+  - logitSplines_start
+  - logit_ztbinom
+  - cappedLogit_ztbinom
+- title: Fit a detection probability curve
+  contents:
+  - dpc
+- title: Plot a fitted curve
+  contents:
+  - plotEmpSplines
+  - plotDPC
+- title: Supporting functions
+  contents:
+  - getNuisance
+  - gatherResults
+- title: Datasets
+  contents:
+  - datasetA
+  - datasetB
+  - datasetC
+  - datasetD
+  - shbheart
+  - ratio2.5
+development:
+  mode: auto
