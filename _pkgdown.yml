@@ -6,9 +6,15 @@ navbar:
   structure:
     left:  [intro, articles, reference]
   components:
+    intro:
+      text: Main text results
+      href: articles/protDP.html
     articles:
       text: Supplementary results
       href: articles/supp.html
+    github:
+      icon: fa-github fa-lg
+      href: https://github.com/Mengbo-Li/protDP
 reference:
 - title: Fit an empirical logistic spline
   contents:
