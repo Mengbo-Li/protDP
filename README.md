@@ -1,6 +1,6 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/Mengbo-Li/protDP/workflows/R-CMD-check/badge.svg)](https://github.com/Mengbo-Li/protDP/actions)
-[![test-coverage](https://github.com/Mengbo-Li/protDP/workflows/test-coverage/badge.svg)](https://github.com/Mengbo-Li/protDP/actions)
+[![Codecov](https://codecov.io/gh/Mengbo-Li/protDP/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Mengbo-Li/protDP?branch=main)
 <!-- badges: end -->
 
 

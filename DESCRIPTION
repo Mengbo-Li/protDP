@@ -18,10 +18,11 @@ Suggests:
     knitr,
     tidyverse,
     markdown,
-    gridExtra, 
-    RColorBrewer, 
-    formatR, 
-    magick
+    gridExtra,
+    RColorBrewer,
+    formatR,
+    magick,
+    covr
 LazyData: true
 LazyDataCompression: xz
 VignetteBuilder: knitr
