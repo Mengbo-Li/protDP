@@ -24,6 +24,10 @@ To install the package, use the following script in R:
 devtools::install_github("Mengbo-Li/protDP")
 ```
 
+## Examples
+
+See data examples at https://mengbo-li.github.io/protDP/articles/protDP.html. 
+
 ## Contact
 
 Open an [**issue**](https://github.com/Mengbo-Li/protDP/issues) should there be

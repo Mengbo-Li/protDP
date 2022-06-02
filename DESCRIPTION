@@ -2,15 +2,16 @@ Package: protDP
 Type: Package
 Title: Estimation of the Detection Probability Curve in Label Free Shotgun 
     Proteomics Data
-Version: 0.1.0
+Version: 1.0.0
 Authors@R: 
     c(person("Mengbo", "Li", 
-            email = "mengboli103@gmail.com", 
+            email = "li.me@wehi.edu.au", 
             role = c("aut", "cre")))
 Maintainer: Mengbo Li <li.me@wehi.edu.au>
-Description: Detection probability curve is estimated for mass spectrometry-
-    based proteomics data. This package hosts all used functions and a few 
-    public data examples for reference. 
+Description: Detection probability curve is estimated for label free shotgun
+    proteomics data. This package hosts all used functions and dataset examples
+    for the manuscript titled "Missing values are informative in label free
+    shotgun proteomics data". 
 License: file LICENSE
 Depends: R (>= 3.5)
 Imports: limma, splines, stats
