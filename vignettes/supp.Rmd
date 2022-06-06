@@ -404,7 +404,7 @@ round(ddaPlasmaProt$dpcFit$beta, 2)
 <br>
 <br>
 
-# Supplmentary dataset: Sydney heart bank data
+# Supplementary dataset: Sydney heart bank data
 
 Cryopreserved left ventricular myocardium samples from the human hearts were analysed. MS data were acquired in DIA mode and analysed by Spectronaunt v12 with a DDA spectral library generated from the pooled sample [@li2020core]. Details on sample preparation, LC-MS/MS workflow and data processing steps including the generation of the spectial library can be found in @li2020core. Here we consider the healthy donor heart samples. Both precursor- and protein group-level data are log2-transformed before analysis. 
 
@@ -544,7 +544,7 @@ round(res[["prot"]]$dpcFit$beta, 2)
 
 
 
-# Supplmentary dataset: UPS1 spiked in yeast extract
+# Supplementary dataset: UPS1 spiked-in yeast extract
 
 Three concentrations of UPS1 (25 fmol, 10 fmol and 5 fmol) were spiked in yeast extract [@giai2016calibration]. This is a DDA dataset and MS raw data were processed by MaxQuant. Here we look at the dataset which compares 25 fmol to 10 fmol spiked-ins. Processed data were downloaded from ProteomeXchange Consortium via the PRIDE partner repository with the dataset identifier PXD002370. For peptide-level data, we use the `peptides.txt` file and for the protein-level analysis, we use the `proteinGroups.txt` file from the MaxQuant output. Log2-transformation is first applied before analysis. 
 
