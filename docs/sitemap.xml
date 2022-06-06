@@ -25,9 +25,6 @@
     <loc>/reference/cappedLogit_ztbinom.html</loc>
   </url>
   <url>
-    <loc>/reference/charite.html</loc>
-  </url>
-  <url>
     <loc>/reference/datasetA.html</loc>
   </url>
   <url>
@@ -40,15 +37,6 @@
     <loc>/reference/datasetD.html</loc>
   </url>
   <url>
-    <loc>/reference/ddaPlasma.html</loc>
-  </url>
-  <url>
-    <loc>/reference/diannSubset.html</loc>
-  </url>
-  <url>
-    <loc>/reference/diapasef.html</loc>
-  </url>
-  <url>
     <loc>/reference/dpc.html</loc>
   </url>
   <url>
@@ -58,9 +46,6 @@
     <loc>/reference/getNuisance.html</loc>
   </url>
   <url>
-    <loc>/reference/heart.html</loc>
-  </url>
-  <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
@@ -68,12 +53,6 @@
   </url>
   <url>
     <loc>/reference/logit_ztbinom.html</loc>
-  </url>
-  <url>
-    <loc>/reference/maxdia.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mouseSILAC.html</loc>
   </url>
   <url>
     <loc>/reference/plotDPC.html</loc>
@@ -86,8 +65,5 @@
   </url>
   <url>
     <loc>/reference/shbheart.html</loc>
-  </url>
-  <url>
-    <loc>/reference/tmt10plex.html</loc>
   </url>
 </urlset>
