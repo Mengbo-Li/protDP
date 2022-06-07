@@ -63,13 +63,13 @@ The dataset has a relatively small amount of missing values with an overall prop
 sum(is.na(dat)) / length(dat)
 ```
 
-## Empirical logistic splines for detected proportions
+## Empirical logistic splines for detected proportions {#emp-datasetA}
 
 Natural cubic splines generated on average observed intensities are fitted on detection proportions with 1, 3 and 5 degrees of freedom: 
 
 ```{r}
 dfList <- seq(1, 5, 2)
-lineColours <- RColorBrewer::brewer.pal(4, "Dark2")
+lineColours <- RColorBrewer::brewer.pal(3, "Dark2")
 ```
 
 
@@ -79,19 +79,61 @@ allFits <- list()
 for (df in dfList) {
   params0 <- logitSplines_start(dp = nuis$dp, mu = nuis$mu_obs, wt = nuis$wt, df = df)
   fit <- logit_ztbinom(dp = nuis$dp, X = params0$X, wt = nuis$wt, beta0 = params0$betas_start)
+  fit$binomEstimate <- params0
   allFits[[(df+1)/2]] <- fit
   if (df == 1)
-    plotEmpSplines(nuis, X = params0$X, fit$params, ylim = c(0, 1.04), 
-                   lineCol = lineColours[(df+1)/2], capped = FALSE)
+    plotEmpSplines(nuis, X = params0$X, fit$params, ylim = c(0, 1.04), lineCol = lineColours[(df+1)/2])
   if (df > 1)
-    plotEmpSplines(nuis, X = params0$X, fit$params, 
-                   plot.dotts = FALSE, ylim = c(0, 1.04), 
-                   lineCol = lineColours[(df+1)/2], capped = FALSE)
+    plotEmpSplines(nuis, X = params0$X, fit$params, ylim = c(0, 1.04), lineCol = lineColours[(df+1)/2], newPlot = FALSE)
 }
 legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
 ```
 
 This plot corresponds to Panel (a) of Figure 1 in the manuscript. 
+
+## Empirical logistic splines assuming the binomial distribution
+
+We have assumed the number of detected samples in each precursor to follow the zero-truncated binomial distribution in Section \@ref(emp-datasetA). As a comparison, logistic regression splines are next fitted assuming the binomial distribution. 
+
+```{r, fig.height=10}
+par(mfrow = c(2, 1))
+for (df in dfList) {
+  params0 <- allFits[[(df+1)/2]]$binomEstimate
+  fit <- allFits[[(df+1)/2]]
+  if (df == 1)
+    plotEmpSplines(nuis, X = params0$X, params0$betas_start, ylim = c(-2, 10), logit = TRUE,
+                   lineCol = lineColours[(df+1)/2], lty = "dotted")
+    plotEmpSplines(nuis, X = params0$X, fit$params, ylim = c(-2, 10), logit = TRUE, 
+                   lineCol = lineColours[(df+1)/2], newPlot = FALSE)
+  if (df > 1)
+    plotEmpSplines(nuis, X = params0$X, params0$betas_start, ylim = c(-2, 10), logit = TRUE, 
+                   lineCol = lineColours[(df+1)/2], lty = "dotted", newPlot = FALSE)
+    plotEmpSplines(nuis, X = params0$X, fit$params, logit = TRUE, 
+                   lineCol = lineColours[(df+1)/2], ylim = c(-2, 10), newPlot = FALSE)
+}
+legend("topleft", legend = c(paste("df = ", dfList), "Binom", "ZB"), 
+       col = c(lineColours, "black", "black"), lwd = 2, lty = c(1, 1, 1, 2, 1), cex = 0.8)
+for (df in dfList) {
+  params0 <- allFits[[(df+1)/2]]$binomEstimate
+  fit <- allFits[[(df+1)/2]]
+  if (df == 1)
+    plotEmpSplines(nuis, X = params0$X, params0$betas_start, ylim = c(0, 1.04), 
+                   lineCol = lineColours[(df+1)/2], lty = "dashed")
+    plotEmpSplines(nuis, X = params0$X, fit$params, ylim = c(0, 1.04),
+                   lineCol = lineColours[(df+1)/2], newPlot = FALSE)
+  if (df > 1)
+    plotEmpSplines(nuis, X = params0$X, params0$betas_start, ylim = c(0, 1.04), 
+                   lineCol = lineColours[(df+1)/2], lty = "dashed", newPlot = FALSE)
+    plotEmpSplines(nuis, X = params0$X, fit$params, ylim = c(0, 1.04), 
+                   lineCol = lineColours[(df+1)/2], newPlot = FALSE)
+}
+legend("bottomright", legend = c(paste("df = ", dfList), "Binom", "ZB"), 
+       col = c(lineColours, "black", "black"), lwd = 2, lty = c(1, 1, 1, 2, 1), cex = 0.8)
+```
+
+The above plots correspond to Figure 2 of the manuscript. 
+
+
 
 
 ## Reduced deviance compared to an intercept model
@@ -121,14 +163,15 @@ This plot corresponds to the green curve in Figure 3 of the manuscript.
 
 ## Empirical logit-linear curve with capped probabilities
 
-Next we allow missingess completely at random (MCAR) to present in data. The probability of detection for any observation in a dataset is capped at a value $\alpha \in (0, 1]$. In other words, we allow a proportion of (1-$\alpha$) observations in data to be missing completely at random. 
+Next we allow missingness completely at random (MCAR) to present in data. The probability of detection for any observation in a dataset is capped at a value $\alpha \in (0, 1]$. In other words, we allow a proportion of (1-$\alpha$) observations in data to be missing completely at random. 
 
 ```{r}
 params0 <- logitSplines_start(dp = nuis$dp, mu = nuis$mu_obs, wt = nuis$wt, df = 1)
 cappedLinear <- cappedLogit_ztbinom(dp = nuis$dp, X = params0$X, wt = nuis$wt, 
                            alpha0 = 0.9, beta0 = params0$betas_start, trace = FALSE)
 round(cappedLinear$params, 2)
-plotEmpSplines(nuis, X = params0$X, cappedLinear$params, lineCol = lineColours[1], ylim = c(0, 1.04))
+plotEmpSplines(nuis, X = params0$X, cappedLinear$params, capped = TRUE, 
+               lineCol = lineColours[1], ylim = c(0, 1.04))
 ```
 
 The estimated value of $\alpha$ is approximately 1. This plot corresponds to Panel (a) in Figure 4 of the manuscript. 
@@ -188,13 +231,10 @@ for (i in 1:length(dfList)) {
   if (i == 1)
     plotEmpSplines(diapasefRes$nuis, X = diapasefRes$splineFits_params0[[i]]$X, 
                    diapasefRes$splineFits[[i]]$params, point.cex = 0.1, 
-                   lineCol = lineColours[i], add.jitter = FALSE,
-                   capped = FALSE)
+                   lineCol = lineColours[i], add.jitter = FALSE)
   if (i > 1)
     plotEmpSplines(diapasefRes$nuis, X = diapasefRes$splineFits_params0[[i]]$X, 
-                   diapasefRes$splineFits[[i]]$params, 
-                   plot.dotts = FALSE, 
-                   lineCol = lineColours[i], capped = FALSE)
+                   diapasefRes$splineFits[[i]]$params, lineCol = lineColours[i], newPlot = FALSE)
 }
 legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
 ```
@@ -208,7 +248,7 @@ This plot corresponds to Panel (b) in Figure 1 of the manuscript.
 ggplot(slice(diapasefRes$devs, 2:4), aes(x = df, y = percDevReduced)) +
   geom_point() +
   geom_line() +
-  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  geom_text(aes(label = signif(percDevReduced, 2)), vjust = -0.8) +
   scale_x_continuous(breaks = c(1, 3, 5)) +
   labs(x = "d.f.", y = "Reduced deviance(%)") +
   ylim(0.90, 1) + 
@@ -220,10 +260,10 @@ This plot corresponds to the orange curve in Figure 3 of the manuscript.
 ## Empirical logit-linear curve with capped probabilities
 
 ```{r}
-plotEmpSplines(diapasefRes$nuis, 
-               X = diapasefRes$splineFits_params0[[1]]$X, 
-               diapasefRes$cappedLinearFit$params, 
-               lineCol = lineColours[1], add.jitter = FALSE, point.cex = 0.1)
+plotEmpSplines(diapasefRes$nuis, X = diapasefRes$splineFits_params0[[1]]$X, 
+               diapasefRes$cappedLinearFit$params, capped = TRUE, 
+               lineCol = lineColours[1], add.jitter = FALSE, 
+               point.cex = 0.1)
 ```
 
 Parameters of the fitted curve are as follows: 
@@ -281,13 +321,11 @@ for (i in 1:length(dfList)) {
   if (i == 1)
     plotEmpSplines(maxdiaRes$nuis, X = maxdiaRes$splineFits_params0[[i]]$X, 
                    maxdiaRes$splineFits[[i]]$params, point.cex = 0.1, 
-                   lineCol = lineColours[i], jitter.amount = 1/ncol(dat)/2,
-                   capped = FALSE)
+                   lineCol = lineColours[i], jitter.amount = 1/ncol(dat)/2)
   if (i > 1)
     plotEmpSplines(maxdiaRes$nuis, X = maxdiaRes$splineFits_params0[[i]]$X, 
                    maxdiaRes$splineFits[[i]]$params, 
-                   plot.dotts = FALSE, 
-                   lineCol = lineColours[i], capped = FALSE)
+                   lineCol = lineColours[i], newPlot = FALSE)
 }
 legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
 ```
@@ -300,7 +338,7 @@ This plot is Panel (c) in Figure 1 in the manuscript.
 ggplot(slice(maxdiaRes$devs, 2:4), aes(x = df, y = percDevReduced)) +
   geom_point() +
   geom_line() +
-  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  geom_text(aes(label = signif(percDevReduced, 2)), vjust = -0.8) +
   scale_x_continuous(breaks = c(1, 3, 5)) +
   labs(x = "d.f.", y = "Reduced deviance(%)") +
   ylim(0.90, 1) + 
@@ -315,6 +353,7 @@ This plot corresponds to the blue curve in Figure 3 of the manuscript.
 plotEmpSplines(maxdiaRes$nuis, 
                X = maxdiaRes$splineFits_params0[[1]]$X, 
                maxdiaRes$cappedLinearFit$params, 
+               capped = TRUE, 
                lineCol = lineColours[1], 
                jitter.amount = 1/ncol(dat)/2, 
                point.cex = 0.1)
@@ -378,13 +417,11 @@ for (i in 1:length(dfList)) {
   if (i == 1)
     plotEmpSplines(ddaPlasmaRes$nuis, X = ddaPlasmaRes$splineFits_params0[[i]]$X, 
                    ddaPlasmaRes$splineFits[[i]]$params, 
-                   lineCol = lineColours[i], add.jitter = FALSE, 
-                   capped = FALSE)
+                   lineCol = lineColours[i], add.jitter = FALSE)
   if (i > 1)
     plotEmpSplines(ddaPlasmaRes$nuis, X = ddaPlasmaRes$splineFits_params0[[i]]$X, 
                    ddaPlasmaRes$splineFits[[i]]$params, 
-                   plot.dotts = FALSE, 
-                   lineCol = lineColours[i], capped = FALSE)
+                   lineCol = lineColours[i], newPlot = FALSE)
 }
 legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1)
 ```
@@ -397,7 +434,7 @@ This plot is Panel (d) in Figure 1 in the main text.
 ggplot(slice(ddaPlasmaRes$devs, 2:4), aes(x = df, y = percDevReduced)) +
   geom_point() +
   geom_line() +
-  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  geom_text(aes(label = signif(percDevReduced, 2)), vjust = -0.8) +
   scale_x_continuous(breaks = c(1, 3, 5)) +
   labs(x = "d.f.", y = "Reduced deviance(%)") +
   ylim(0.90, 1) + 
@@ -410,9 +447,8 @@ This plot corresponds to the pink curve in Figure 3 from the main text.
 
 ```{r}
 plotEmpSplines(ddaPlasmaRes$nuis, X = ddaPlasmaRes$splineFits_params0[[1]]$X, 
-               ddaPlasmaRes$cappedLinearFit$params, 
-               lineCol = lineColours[1], 
-               add.jitter = FALSE)
+               ddaPlasmaRes$cappedLinearFit$params, capped = TRUE, 
+               lineCol = lineColours[1], add.jitter = FALSE)
 ```
 
 This plot is Panel (d) in Figure 4 of the manuscript, with estimated parameters being 

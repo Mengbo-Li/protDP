@@ -23,7 +23,7 @@ intensities"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item">
-  <a class="nav-link" href="../articles/protDP.html">Main text results</a>
+  <a class="nav-link" href="../articles/protDP.html">Main results</a>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../articles/supp.html">Supplementary results</a>
@@ -64,13 +64,12 @@ intensities</p>
   <span class="va">nuis</span>,
   <span class="va">X</span>,
   <span class="va">params</span>,
-  capped <span class="op">=</span> <span class="cn">TRUE</span>,
-  logit <span class="op">=</span> <span class="cn">FALSE</span>,
+  capped <span class="op">=</span> <span class="cn">FALSE</span>,
   add.jitter <span class="op">=</span> <span class="cn">TRUE</span>,
   jitter.amount <span class="op">=</span> <span class="cn">NULL</span>,
   point.cex <span class="op">=</span> <span class="fl">0.2</span>,
-  plot.dotts <span class="op">=</span> <span class="cn">TRUE</span>,
-  lineOnly <span class="op">=</span> <span class="cn">FALSE</span>,
+  newPlot <span class="op">=</span> <span class="cn">TRUE</span>,
+  logit <span class="op">=</span> <span class="cn">FALSE</span>,
   lty <span class="op">=</span> <span class="st">"solid"</span>,
   lineCol <span class="op">=</span> <span class="st">"darkgreen"</span>,
   lwd <span class="op">=</span> <span class="fl">2</span>,
@@ -88,8 +87,6 @@ intensities</p>
 <dd><p>Fitted coefficients.</p></dd>
 <dt>capped</dt>
 <dd><p>Logical. Whether the probabilities are capped by alpha.</p></dd>
-<dt>logit</dt>
-<dd><p>Logical. Whether to plot at the logit scale.</p></dd>
 <dt>add.jitter</dt>
 <dd><p>Logical. Whether to add jitter to the detected proportion
 axis.</p></dd>
@@ -97,10 +94,10 @@ axis.</p></dd>
 <dd><p>Amount of jittering.</p></dd>
 <dt>point.cex</dt>
 <dd><p>Size of the points.</p></dd>
-<dt>plot.dotts</dt>
-<dd><p>Logical. Whether to keep the raw data points in the plot.</p></dd>
-<dt>lineOnly</dt>
-<dd><p>Logical. Whether to plot only fitted lines.</p></dd>
+<dt>newPlot</dt>
+<dd><p>Logical. Whether to start a new plot device.</p></dd>
+<dt>logit</dt>
+<dd><p>Logical. Whether to plot at the logit scale.</p></dd>
 <dt>lty</dt>
 <dd><p>Line type.</p></dd>
 <dt>lineCol</dt>

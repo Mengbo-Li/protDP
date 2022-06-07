@@ -7,7 +7,7 @@ navbar:
     left:  [intro, articles, reference]
   components:
     intro:
-      text: Main text results
+      text: Main results
       href: articles/protDP.html
     articles:
       text: Supplementary results

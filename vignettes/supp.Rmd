@@ -44,7 +44,7 @@ On this page, the analysis workflow presented in the main text is applied on eac
 library(tidyverse)
 library(protDP)
 dfList <- seq(1, 5, 2)
-lineColours <- RColorBrewer::brewer.pal(4, "Dark2")
+lineColours <- RColorBrewer::brewer.pal(3, "Dark2")
 ```
 
 
@@ -75,14 +75,12 @@ for (i in 1:length(dfList)) {
   if (i == 1)
     plotEmpSplines(hyeProt$nuis, X = hyeProt$splineFits_params0[[i]]$X, 
                    hyeProt$splineFits[[i]]$params, 
-                   lineCol = lineColours[i], 
-                   jitter.amount = NULL, point.cex = 0.15, 
-                   capped = FALSE, ylim = c(0, 1.04))
+                   lineCol = lineColours[i], point.cex = 0.15, 
+                   ylim = c(0, 1.04))
   if (i > 1)
     plotEmpSplines(hyeProt$nuis, X = hyeProt$splineFits_params0[[i]]$X, 
                    hyeProt$splineFits[[i]]$params, 
-                   plot.dotts = FALSE, 
-                   lineCol = lineColours[i], capped = FALSE)
+                   lineCol = lineColours[i], newPlot = FALSE)
 }
 legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
 ```
@@ -93,7 +91,7 @@ legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 
 ggplot(slice(hyeProt$devs, 2:4), aes(x = df, y = percDevReduced)) +
   geom_point() +
   geom_line() +
-  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  geom_text(aes(label = signif(percDevReduced, 2)), vjust = -0.8) +
   scale_x_continuous(breaks = c(1, 3, 5)) +
   labs(x = "d.f.", y = "Reduced deviance(%)") +
   ylim(0.90, 1) + 
@@ -105,12 +103,12 @@ ggplot(slice(hyeProt$devs, 2:4), aes(x = df, y = percDevReduced)) +
 
 ```{r}
 plotEmpSplines(hyeProt$nuis, X = hyeProt$splineFits_params0[[1]]$X, 
-               hyeProt$cappedLinearFit$params, 
+               hyeProt$cappedLinearFit$params, capped = TRUE, 
                lineCol = lineColours[1], ylim = c(0, 1.04), 
-               jitter.amount = NULL, point.cex = 0.15)
+               point.cex = 0.15)
 ```
 
-The estimated paramters are
+The estimated parameters are
 
 ```{r}
 round(hyeProt$cappedLinearFit$params, 2)
@@ -167,13 +165,10 @@ for (i in 1:length(dfList)) {
     plotEmpSplines(scProt$nuis, X = scProt$splineFits_params0[[i]]$X, 
                    scProt$splineFits[[i]]$params, 
                    lineCol = lineColours[i], 
-                   add.jitter = FALSE, point.cex = 0.15, 
-                   capped = FALSE)
+                   add.jitter = FALSE, point.cex = 0.15)
   if (i > 1)
     plotEmpSplines(scProt$nuis, X = scProt$splineFits_params0[[i]]$X, 
-                   scProt$splineFits[[i]]$params, 
-                   plot.dotts = FALSE, 
-                   lineCol = lineColours[i], capped = FALSE)
+                   scProt$splineFits[[i]]$params, lineCol = lineColours[i], newPlot = FALSE)
 }
 legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
 ```
@@ -184,7 +179,7 @@ legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 
 ggplot(slice(scProt$devs, 2:4), aes(x = df, y = percDevReduced)) +
   geom_point() +
   geom_line() +
-  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  geom_text(aes(label = signif(percDevReduced, 2)), vjust = -0.8) +
   scale_x_continuous(breaks = c(1, 3, 5)) +
   labs(x = "d.f.", y = "Reduced deviance(%)") +
   ylim(0.90, 1) + 
@@ -196,9 +191,9 @@ ggplot(slice(scProt$devs, 2:4), aes(x = df, y = percDevReduced)) +
 
 ```{r}
 plotEmpSplines(scProt$nuis, X = scProt$splineFits_params0[[1]]$X, 
-               scProt$cappedLinearFit$params, 
+               scProt$cappedLinearFit$params, capped = TRUE, 
                lineCol = lineColours[1], 
-               add.jitter = FALSE, point.cex = 0.15)
+               point.cex = 0.15)
 ```
 
 Estimated parameters are 
@@ -254,13 +249,11 @@ for (i in 1:length(dfList)) {
     plotEmpSplines(hepg2Prot$nuis, X = hepg2Prot$splineFits_params0[[i]]$X, 
                    hepg2Prot$splineFits[[i]]$params, 
                    lineCol = lineColours[i], 
-                   jitter.amount = 1/ncol(dat)/2, point.cex = 0.2, 
-                   capped = FALSE)
+                   jitter.amount = 1/ncol(dat)/2)
   if (i > 1)
     plotEmpSplines(hepg2Prot$nuis, X = hepg2Prot$splineFits_params0[[i]]$X, 
                    hepg2Prot$splineFits[[i]]$params, 
-                   plot.dotts = FALSE, 
-                   lineCol = lineColours[i], capped = FALSE)
+                   lineCol = lineColours[i], newPlot = FALSE)
 }
 legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
 ```
@@ -271,7 +264,7 @@ legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 
 ggplot(slice(hepg2Prot$devs, 2:4), aes(x = df, y = percDevReduced)) +
   geom_point() +
   geom_line() +
-  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  geom_text(aes(label = signif(percDevReduced, 2)), vjust = -0.8) +
   scale_x_continuous(breaks = c(1, 3, 5)) +
   labs(x = "d.f.", y = "Reduced deviance(%)") +
   ylim(0.90, 1) + 
@@ -283,9 +276,9 @@ ggplot(slice(hepg2Prot$devs, 2:4), aes(x = df, y = percDevReduced)) +
 
 ```{r}
 plotEmpSplines(hepg2Prot$nuis, X = hepg2Prot$splineFits_params0[[1]]$X, 
-               hepg2Prot$cappedLinearFit$params, 
+               hepg2Prot$cappedLinearFit$params, capped = TRUE, 
                lineCol = lineColours[1], 
-               jitter.amount = 1/ncol(dat)/2, point.cex = 0.2)
+               jitter.amount = 1/ncol(dat)/2)
 ```
 
 The estimated parameters are 
@@ -298,7 +291,7 @@ round(hepg2Prot$cappedLinearFit$params, 2)
 ## Detection probability curve assuming normal observed intensities
 
 ```{r}
-plotDPC(hepg2Prot$nuis, hepg2Prot$dpcFit, jitter.amount = 1/ncol(dat)/2, point.cex = 0.2)
+plotDPC(hepg2Prot$nuis, hepg2Prot$dpcFit, jitter.amount = 1/ncol(dat)/2)
 ```
 
 Parameters of the detection probability curve are 
@@ -344,13 +337,11 @@ for (i in 1:length(dfList)) {
     plotEmpSplines(ddaPlasmaProt$nuis, X = ddaPlasmaProt$splineFits_params0[[i]]$X, 
                    ddaPlasmaProt$splineFits[[i]]$params, 
                    lineCol = lineColours[i], 
-                   add.jitter = FALSE, point.cex = 0.2, 
-                   capped = FALSE)
+                   add.jitter = FALSE)
   if (i > 1)
     plotEmpSplines(ddaPlasmaProt$nuis, X = ddaPlasmaProt$splineFits_params0[[i]]$X, 
                    ddaPlasmaProt$splineFits[[i]]$params, 
-                   plot.dotts = FALSE, 
-                   lineCol = lineColours[i], capped = FALSE)
+                   lineCol = lineColours[i], newPlot = FALSE)
 }
 legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
 ```
@@ -361,7 +352,7 @@ legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 
 ggplot(slice(ddaPlasmaProt$devs, 2:4), aes(x = df, y = percDevReduced)) +
   geom_point() +
   geom_line() +
-  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  geom_text(aes(label = signif(percDevReduced, 2)), vjust = -0.8) +
   scale_x_continuous(breaks = c(1, 3, 5)) +
   labs(x = "d.f.", y = "Reduced deviance(%)") +
   ylim(0.90, 1) + 
@@ -373,9 +364,9 @@ ggplot(slice(ddaPlasmaProt$devs, 2:4), aes(x = df, y = percDevReduced)) +
 
 ```{r}
 plotEmpSplines(ddaPlasmaProt$nuis, X = ddaPlasmaProt$splineFits_params0[[1]]$X, 
-               ddaPlasmaProt$cappedLinearFit$params, 
+               ddaPlasmaProt$cappedLinearFit$params, capped = TRUE, 
                lineCol = lineColours[1], 
-               add.jitter = FALSE, point.cex = 0.2)
+               add.jitter = FALSE)
 ```
 
 Estimated parameters are
@@ -388,7 +379,7 @@ round(ddaPlasmaProt$cappedLinearFit$params, 2)
 ## Detection probability curve assuming normal observed intensities
 
 ```{r}
-plotDPC(ddaPlasmaProt$nuis, ddaPlasmaProt$dpcFit, add.jitter = FALSE, point.cex = 0.2)
+plotDPC(ddaPlasmaProt$nuis, ddaPlasmaProt$dpcFit, add.jitter = FALSE)
 ```
 
 Parameters for the fitted detection probability curve are
@@ -412,9 +403,9 @@ Cryopreserved left ventricular myocardium samples from the human hearts were ana
 
 ```{r}
 data("shbheart")
-shbheart_prec <- log2(shbheart$prec)
+shbheart_prec <- shbheart$prec
 dim(shbheart_prec)
-shbheart_prot <- log2(shbheart$prot)
+shbheart_prot <- shbheart$prot
 dim(shbheart_prot)
 ```
 
@@ -447,12 +438,10 @@ for (res_i in 1:2) {
   if (i == 1)
     plotEmpSplines(eachRes$nuis, X = eachRes$splineFits_params0[[i]]$X, 
                    eachRes$splineFits[[i]]$params, lineCol = lineColours[i], 
-                   jitter.amount = 1/ncol(shbheart_prec)/2, point.cex = 0.15, 
-                   capped = FALSE)
+                   jitter.amount = 1/ncol(shbheart_prec)/2, point.cex = 0.15)
   if (i > 1)
     plotEmpSplines(eachRes$nuis, X = eachRes$splineFits_params0[[i]]$X, 
-                   eachRes$splineFits[[i]]$params, 
-                   plot.dotts = FALSE, lineCol = lineColours[i], capped = FALSE)
+                   eachRes$splineFits[[i]]$params, lineCol = lineColours[i], newPlot = FALSE)
   }
   title(sub = c("Precursor-level", "Protein-level")[res_i])
   legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
@@ -465,7 +454,7 @@ for (res_i in 1:2) {
 devPlot1 <- ggplot(slice(res[[1]]$devs, 2:4), aes(x = df, y = percDevReduced)) +
   geom_point() +
   geom_line() +
-  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  geom_text(aes(label = signif(percDevReduced, 2)), vjust = -0.8) +
   scale_x_continuous(breaks = c(1, 3, 5)) +
   labs(x = "d.f.", y = "Reduced deviance(%)") +
   ylim(0.90, 1) + 
@@ -474,7 +463,7 @@ devPlot1 <- ggplot(slice(res[[1]]$devs, 2:4), aes(x = df, y = percDevReduced)) +
 devPlot2 <- ggplot(slice(res[[2]]$devs, 2:4), aes(x = df, y = percDevReduced)) +
   geom_point() +
   geom_line() +
-  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  geom_text(aes(label = signif(percDevReduced, 2)), vjust = -0.8) +
   scale_x_continuous(breaks = c(1, 3, 5)) +
   labs(x = "d.f.", y = "Reduced deviance(%)") +
   ylim(0.90, 1) + 
@@ -483,7 +472,6 @@ devPlot2 <- ggplot(slice(res[[2]]$devs, 2:4), aes(x = df, y = percDevReduced)) +
 gridExtra::grid.arrange(devPlot1, devPlot2, ncol = 2)
 ```
 
-
 ## Empirical logit-linear curve with capped probabilities
 
 ```{r, fig.width = 8, fig.height = 10}
@@ -491,7 +479,7 @@ par(mfrow = c(2, 1))
 for (res_i in 1:2) {
   eachRes <- res[[res_i]]
   plotEmpSplines(eachRes$nuis, X = eachRes$splineFits_params0[[1]]$X, 
-                 eachRes$cappedLinearFit$params, 
+                 eachRes$cappedLinearFit$params, capped = TRUE, 
                  lineCol = lineColours[1], 
                  jitter.amount = 1/ncol(shbheart_prec)/2, point.cex = 0.15)
   title(sub = c("Precursor-level", "Protein-level")[res_i])
@@ -586,11 +574,10 @@ for (res_i in 1:2) {
     plotEmpSplines(eachRes$nuis, X = eachRes$splineFits_params0[[i]]$X, 
                    eachRes$splineFits[[i]]$params, lineCol = lineColours[i], 
                    jitter.amount = 1/ncol(usp1_prec)/2, point.cex = 0.15, 
-                   capped = FALSE, ylim = c(0, 1.08))
+                   ylim = c(0, 1.08))
   if (i > 1)
     plotEmpSplines(eachRes$nuis, X = eachRes$splineFits_params0[[i]]$X, 
-                   eachRes$splineFits[[i]]$params, 
-                   plot.dotts = FALSE, lineCol = lineColours[i], capped = FALSE)
+                   eachRes$splineFits[[i]]$params, lineCol = lineColours[i], newPlot = FALSE)
   }
   title(sub = c("Precursor-level", "Protein-level")[res_i])
   legend("bottomright", legend = paste("df = ", dfList), col = lineColours, lwd = 2, lty = 1, cex = 0.8)
@@ -603,7 +590,7 @@ for (res_i in 1:2) {
 devPlot1 <- ggplot(slice(res[[1]]$devs, 2:4), aes(x = df, y = percDevReduced)) +
   geom_point() +
   geom_line() +
-  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  geom_text(aes(label = signif(percDevReduced, 2)), vjust = -0.8) +
   scale_x_continuous(breaks = c(1, 3, 5)) +
   labs(x = "d.f.", y = "Reduced deviance(%)") +
   ylim(0.90, 1) + 
@@ -612,7 +599,7 @@ devPlot1 <- ggplot(slice(res[[1]]$devs, 2:4), aes(x = df, y = percDevReduced)) +
 devPlot2 <- ggplot(slice(res[[2]]$devs, 2:4), aes(x = df, y = percDevReduced)) +
   geom_point() +
   geom_line() +
-  geom_text(aes(label = signif(percDevReduced, 3)), vjust = -0.8) +
+  geom_text(aes(label = signif(percDevReduced, 2)), vjust = -0.8) +
   scale_x_continuous(breaks = c(1, 3, 5)) +
   labs(x = "d.f.", y = "Reduced deviance(%)") +
   ylim(0.90, 1) + 
@@ -630,9 +617,8 @@ par(mfrow = c(2, 1))
 for (res_i in 1:2) {
   eachRes <- res[[res_i]]
   plotEmpSplines(eachRes$nuis, X = eachRes$splineFits_params0[[1]]$X, 
-                 eachRes$cappedLinearFit$params, 
-                 lineCol = lineColours[1], 
-                 jitter.amount = 1/ncol(usp1_prec)/2, point.cex = 0.15, 
+                 eachRes$cappedLinearFit$params, capped = TRUE, 
+                 lineCol = lineColours[1], jitter.amount = 1/ncol(usp1_prec)/2, point.cex = 0.15, 
                  ylim = c(0, 1.08))
   title(sub = c("Precursor-level", "Protein-level")[res_i])
 }

@@ -9,13 +9,12 @@ plotEmpSplines(
   nuis,
   X,
   params,
-  capped = TRUE,
-  logit = FALSE,
+  capped = FALSE,
   add.jitter = TRUE,
   jitter.amount = NULL,
   point.cex = 0.2,
-  plot.dotts = TRUE,
-  lineOnly = FALSE,
+  newPlot = TRUE,
+  logit = FALSE,
   lty = "solid",
   lineCol = "darkgreen",
   lwd = 2,
@@ -31,8 +30,6 @@ plotEmpSplines(
 
 \item{capped}{Logical. Whether the probabilities are capped by alpha.}
 
-\item{logit}{Logical. Whether to plot at the logit scale.}
-
 \item{add.jitter}{Logical. Whether to add jitter to the detected proportion
 axis.}
 
@@ -40,9 +37,9 @@ axis.}
 
 \item{point.cex}{Size of the points.}
 
-\item{plot.dotts}{Logical. Whether to keep the raw data points in the plot.}
+\item{newPlot}{Logical. Whether to start a new plot device.}
 
-\item{lineOnly}{Logical. Whether to plot only fitted lines.}
+\item{logit}{Logical. Whether to plot at the logit scale.}
 
 \item{lty}{Line type.}
 
