@@ -1,0 +1,20 @@
+test_that("Get nuisance parameters work", {
+  data("datasetA")
+  eg <- getNuisance(log2(datasetA$prot))
+  expect_type(eg, "list")
+  expect_equal(length(eg), 7)
+  # test component classes
+  expect_type(eg[[1]], "integer")
+  expect_type(eg[[2]], "double")
+  expect_type(eg[[3]], "double")
+  expect_type(eg[[4]], "double")
+  expect_type(eg[[5]], "double")
+  expect_type(eg[[6]], "list")
+  expect_type(eg[[7]], "list")
+  # test component lengths
+  expect_equal(length(eg[[1]]), nrow(datasetA$prot))
+  expect_equal(length(eg[[2]]), nrow(datasetA$prot))
+  expect_equal(length(eg[[3]]), nrow(datasetA$prot))
+  expect_equal(length(eg[[4]]), nrow(datasetA$prot))
+  expect_length(eg[[5]], 2)
+})

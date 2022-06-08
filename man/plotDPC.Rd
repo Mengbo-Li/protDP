@@ -11,8 +11,7 @@ plotDPC(
   jitter.amount = NULL,
   point.cex = 0.2,
   lwd = 2,
-  ylim = c(0, 1),
-  capped = FALSE
+  ylim = c(0, 1)
 )
 }
 \arguments{
@@ -30,8 +29,6 @@ axis.}
 \item{lwd}{Line width.}
 
 \item{ylim}{Limits of the y-axis.}
-
-\item{capped}{Logical. Whether the probabilities are capped by alpha.}
 }
 \value{
 The plot.
