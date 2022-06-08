@@ -53,27 +53,20 @@ plotEmpSplines <- function(nuis,
       alpha <- 1
       betas <- params
     }
-    df <- length(betas) - 1
     eta <- colSums(t(X) * betas)
     fitte.dp <- alpha * plogis(eta)
     lines(x[order(x)], fitte.dp[order(x)], col = lineCol, lwd = lwd, lty = lty)
   } else {
+    # when plotting at the logit scale, there is no capped functionality
     X <- cbind(1, X)
-    if (capped) {
-      alpha <- params[1]
-      betas <- params[-1]
-    } else {
-      alpha <- 1
-      betas <- params
-    }
-    df <- length(betas) - 1
+    betas <- params
     eta <- colSums(t(X) * betas)
-    fitte.dp <- alpha * plogis(eta)
-    fitte.eta <- qlogis(fitte.dp)
-    if (newPlot) plot(x[order(x)], fitte.eta[order(x)], col = lineCol, lwd = lwd, type = "l",
-                       ylim = ylim, lty = lty,
-                       xlab = "Average observed intensity", ylab = "logit(detected proportion)",
-                       main = "Empirical splines: Logit scale")
-    else lines(x[order(x)], fitte.eta[order(x)], col = lineCol, lwd = lwd, lty = lty)
+    if (newPlot) plot(x[order(x)], eta[order(x)], col = lineCol,
+                      lwd = lwd, type = "l",
+                      ylim = ylim, lty = lty,
+                      xlab = "Average observed intensity",
+                      ylab = "logit(detected proportion)",
+                      main = "Empirical splines: Logit scale")
+    else lines(x[order(x)], eta[order(x)], col = lineCol, lwd = lwd, lty = lty)
   }
 }
