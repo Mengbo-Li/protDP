@@ -26,7 +26,7 @@ test_that("Plotting an empirical spline works", {
     plotEmpSplines(eg.nuis,
                    X = eg.start1$X,
                    params = eg.fit1$params,
-                   jitter.amount = 0.1,
+                   add.jitter = FALSE,
                    ylim = c(0, 1.04))
     plotEmpSplines(eg.nuis,
                    X = eg.start5$X,

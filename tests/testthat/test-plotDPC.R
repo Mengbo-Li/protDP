@@ -4,7 +4,7 @@ test_that("Plotting a detection probability curve works", {
   eg.dpc <- dpc(eg.nuis)
   theplot <- function() {
     set.seed(104)
-    plotDPC(eg.nuis, eg.dpc, ylim = c(0, 1.04))
+    plotDPC(eg.nuis, eg.dpc, ylim = c(0, 1.04), add.jitter = FALSE)
   }
 
   vdiffr::expect_doppelganger("DPC plot", theplot)
