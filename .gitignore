@@ -46,7 +46,3 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
-
-# tests involving plots are run locally
-tests/testthat/test-plotDPC.R
-tests/testthat/test-plotEmpSplines.R
