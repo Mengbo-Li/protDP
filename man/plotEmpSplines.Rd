@@ -18,6 +18,7 @@ plotEmpSplines(
   lty = "solid",
   lineCol = "darkgreen",
   lwd = 2,
+  xlim = NULL,
   ylim = c(0, 1)
 )
 }
@@ -46,6 +47,8 @@ axis.}
 \item{lineCol}{Line color.}
 
 \item{lwd}{Line width.}
+
+\item{xlim}{Limits of the x-axis.}
 
 \item{ylim}{Limits of the y-axis.}
 }

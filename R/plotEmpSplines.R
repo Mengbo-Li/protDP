@@ -14,6 +14,7 @@
 #' @param lty Line type.
 #' @param lineCol Line color.
 #' @param lwd Line width.
+#' @param xlim Limits of the x-axis.
 #' @param ylim Limits of the y-axis.
 #'
 #' @export
@@ -34,6 +35,7 @@ plotEmpSplines <- function(nuis,
                            lty = "solid",
                            lineCol = "darkgreen",
                            lwd = 2,
+                           xlim = NULL,
                            ylim = c(0, 1)) {
 
   x <- nuis$mu_obs
@@ -41,9 +43,14 @@ plotEmpSplines <- function(nuis,
   if (!logit) {
     if (add.jitter) y <- jitter(y, amount = jitter.amount)
     if (newPlot)
-      plot(x = x, y = y,
-           pch = 16, cex = point.cex, ylim = ylim,
-           xlab = "Average observed intensity", ylab = "Detection proportion",
+      plot(x = x,
+           y = y,
+           pch = 16,
+           cex = point.cex,
+           xlim = xlim,
+           ylim = ylim,
+           xlab = "Average observed intensity",
+           ylab = "Detection proportion",
            main = "Empirical splines")
     X <- cbind(1, X)
     if (capped) {
@@ -61,9 +68,14 @@ plotEmpSplines <- function(nuis,
     X <- cbind(1, X)
     betas <- params
     eta <- colSums(t(X) * betas)
-    if (newPlot) plot(x[order(x)], eta[order(x)], col = lineCol,
-                      lwd = lwd, type = "l",
-                      ylim = ylim, lty = lty,
+    if (newPlot) plot(x[order(x)],
+                      eta[order(x)],
+                      col = lineCol,
+                      lwd = lwd,
+                      type = "l",
+                      xlim = xlim,
+                      ylim = ylim,
+                      lty = lty,
                       xlab = "Average observed intensity",
                       ylab = "logit(detected proportion)",
                       main = "Empirical splines: Logit scale")
