@@ -4,7 +4,7 @@
 \alias{logit_ztbinom}
 \title{Fitting an empirical logistic spline curve for detection proportion}
 \usage{
-logit_ztbinom(dp, X, wt, beta0, b0.upper = 0)
+logit_ztbinom(dp, X, wt, beta0, b0.upper = 0, b1.upper = Inf)
 }
 \arguments{
 \item{dp}{A vector of detection proportion in all precursors.}
@@ -17,6 +17,8 @@ binomial distribution.}
 \item{beta0}{Start values for the beta coefficients.}
 
 \item{b0.upper}{Upper bound for b0.}
+
+\item{b1.upper}{Upper bound for b1.}
 }
 \value{
 Fitted beta coefficients and the fitting history.

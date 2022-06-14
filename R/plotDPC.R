@@ -29,7 +29,7 @@ plotDPC <- function(nuis,
        xlab = "Intensity", ylab = "Detection probability",
        main = "Detection probability curve")
   x <- x[order(x)]
-  lines(x = x, y = plogis(nuis$betaStart[1] + nuis$betaStart[2]*x),
+  lines(x = x, y = plogis(dpcFit$betaStart[1] + dpcFit$betaStart[2]*x),
         lty = "dashed", lwd = lwd)
   lines(x = x, y = plogis(dpcFit$beta[1] + dpcFit$beta[2]*x),
         col = "blue", lwd = lwd)

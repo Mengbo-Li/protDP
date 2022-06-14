@@ -13,7 +13,8 @@ and columns are samples.}
 \item{b1.upper}{Upper bound for beta_1 when fitting the detection probability
 curve. Typically 1.}
 
-\item{b0.upper}{Upper bound for beta_0 when fitting a regression spline.}
+\item{b0.upper}{Upper bound for beta_0 when fitting an empirical regression
+spline.}
 }
 \value{
 List of results including the logistic-spline fits, the deviance

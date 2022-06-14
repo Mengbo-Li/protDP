@@ -27,6 +27,7 @@ getNuisance <- function(Y) {
   s2 <- fit0$s2.prior
   glmfit0 <- glm(dp ~ mu_obs, weights = wt, family = binomial)
   betaStart <- as.numeric(coef(glmfit0))
+  names(betaStart) <- c("b0", "b1")
   return(list(wt = wt,
               dp = dp,
               mu_obs = mu_obs,

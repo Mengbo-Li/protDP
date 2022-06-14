@@ -4,7 +4,8 @@
 #' and columns are samples.
 #' @param b1.upper Upper bound for beta_1 when fitting the detection probability
 #' curve. Typically 1.
-#' @param b0.upper Upper bound for beta_0 when fitting a regression spline.
+#' @param b0.upper Upper bound for beta_0 when fitting an empirical regression
+#' spline.
 #'
 #' @return List of results including the logistic-spline fits, the deviance
 #' partitioning plot, the capped logit-linear fit and the fitted detection
@@ -26,7 +27,8 @@ gatherResults <- function(dat, b1.upper = 1, b0.upper = 0) {
                          X = params0$X,
                          wt = nuis$wt,
                          beta0 = params0$betas_start,
-                         b0.upper = b0.upper)
+                         b0.upper = b0.upper,
+                         b1.upper = Inf)
     splineFits_params0[[(df+1)/2]] <- params0
     splineFits[[(df+1)/2]] <- fit
   }

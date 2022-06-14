@@ -16,17 +16,24 @@ dpc <- function(nuis, maxit = 100, eps = 1e-4, b1.upper = 1) {
   wt <- nuis$wt
   s2 <- nuis$s2
   mu_obs <- nuis$mu_obs
-  mu_mis <- mu_obs - nuis$betaStart[2]*s2
-  betas <- nuis$betaStart
+  fit0 <- logit_ztbinom(dp = nuis$dp,
+                        X = matrix(nuis$mu_obs, ncol = 1),
+                        wt = nuis$wt,
+                        beta0 = nuis$betaStart,
+                        b0.upper = 0,
+                        b1.upper = b1.upper)
+  betaStart <- fit0$params
+  mu_mis <- mu_obs - betaStart[2]*s2
+  betas <- betaStart
   betas.hist <- matrix(betas, nrow = 1)
   negLL <- dpc_ztbinom.negLL(betas, dp, wt, mu_obs, mu_mis)
   negLL.hist <- negLL
   for (i in 1:maxit) {
     ztbinomFit <- stats::optim(betas, dpc_ztbinom.negLL,
-                        dp = dp, wt = wt,
-                        mu_obs = mu_obs, mu_mis = mu_mis,
-                        method = "L-BFGS-B", lower = c(-Inf, 0),
-                        upper = c(0, b1.upper))
+                               dp = dp, wt = wt,
+                               mu_obs = mu_obs, mu_mis = mu_mis,
+                               method = "L-BFGS-B", lower = c(-Inf, 0),
+                               upper = c(0, b1.upper))
     newBetas <- ztbinomFit$par
     mu_mis <- mu_obs - newBetas[2]*s2
     newNegLL <- dpc_ztbinom.negLL(newBetas, dp, wt, mu_obs, mu_mis)
@@ -39,5 +46,5 @@ dpc <- function(nuis, maxit = 100, eps = 1e-4, b1.upper = 1) {
   info <- cbind(betas.hist, negLL.hist)
   colnames(info) <- c("b0", "b1", "neg.ZBLL")
   rownames(info) <- paste("i=", 0:(nrow(info)-1), sep = "")
-  return(list(beta = betas, hist = info, mu_mis = mu_mis))
+  return(list(beta = betas, hist = info, betaStart = betaStart, mu_mis = mu_mis))
 }

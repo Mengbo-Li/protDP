@@ -206,7 +206,7 @@ round(scProt$cappedLinearFit$params, 2)
 ## Detection probability curve assuming normal observed intensities
 
 ```{r}
-plotDPC(scProt$nuis, scProt$dpcFit, add.jitter = FALSE, point.cex = 0.15)
+plotDPC(scProt$nuis, scProt$dpcFit, add.jitter = FALSE, point.cex = 0.1)
 ```
 
 Parameters of the detection probability curve are as follows: 
