@@ -54,17 +54,19 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">gatherResults</span><span class="op">(</span><span class="va">data</span>, b1.upper <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">gatherResults</span><span class="op">(</span><span class="va">dat</span>, b1.upper <span class="op">=</span> <span class="fl">1</span>, b0.upper <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>data</dt>
+    <dl><dt>dat</dt>
 <dd><p>The log2-transformed intensity matrix where rows are precursors
 and columns are samples.</p></dd>
 <dt>b1.upper</dt>
 <dd><p>Upper bound for beta_1 when fitting the detection probability
 curve. Typically 1.</p></dd>
+<dt>b0.upper</dt>
+<dd><p>Upper bound for beta_0 when fitting a regression spline.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>

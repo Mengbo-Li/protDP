@@ -114,7 +114,7 @@ The estimated parameters are
 round(hyeProt$cappedLinearFit$params, 2)
 ```
 
-We see that the estimated $\alpha$ value is 1, suggesting no MCAR exists in data. 
+We see that the estimated $\alpha$ value is 1. 
 
 
 ## Detection probability curve assuming normal observed intensities
@@ -427,7 +427,8 @@ sum(is.na(shbheart_prot)) / length(shbheart_prot)
 The analysis workflow presented in the manuscript is applied on the dataset on both precursor- and protein group-level data:
 
 ```{r}
-res <- list(prec = gatherResults(shbheart_prec), prot = gatherResults(shbheart_prot))
+res <- list(prec = gatherResults(shbheart_prec), 
+            prot = gatherResults(shbheart_prot, b0.upper = Inf))
 ```
 
 ```{r, fig.width = 8, fig.height = 10}
@@ -505,7 +506,7 @@ Estimated $\alpha$ values are equal to 1 on both precursor- and protein group-le
 ## Detection probability curve assuming normal observed intensities
 
 ```{r, fig.width = 8, fig.height = 10}
-par(mfrow = c(2, 1))
+par(mfrow = c(2, 2))
 for (res_i in 1:2) {
   eachRes <- res[[res_i]]
   plotDPC(eachRes$nuis, eachRes$dpcFit, jitter.amount = 1/ncol(shbheart_prec)/2, point.cex = 0.15)
@@ -562,7 +563,8 @@ sum(is.na(usp1_prot)) / length(usp1_prot)
 ## Empirical logistic splines for detected proportions
 
 ```{r}
-res <- list(prec = gatherResults(usp1_prec), prot = gatherResults(usp1_prot))
+res <- list(prec = gatherResults(usp1_prec, b0.upper = Inf), 
+            prot = gatherResults(usp1_prot, b0.upper = Inf))
 ```
 
 ```{r, fig.width = 8, fig.height = 10}

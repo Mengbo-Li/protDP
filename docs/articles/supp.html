@@ -156,7 +156,7 @@ to</p>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>alpha    b0    b1 </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a> <span class="fl">1.00</span> <span class="sc">-</span><span class="fl">2.33</span> <span class="fl">19.98</span> </span></code></pre></div>
 <p>We see that the estimated <span class="math inline">\(\alpha\)</span>
-value is 1, suggesting no MCAR exists in data.</p>
+value is 1.</p>
 </div>
 <div class="section level3">
 <h3 id="detection-probability-curve-assuming-normal-observed-intensities">Detection probability curve assuming normal observed
@@ -429,7 +429,8 @@ group-level is</p>
 <p>The analysis workflow presented in the manuscript is applied on the
 dataset on both precursor- and protein group-level data:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>prec <span class="op">=</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">shbheart_prec</span><span class="op">)</span>, prot <span class="op">=</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">shbheart_prot</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>prec <span class="op">=</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">shbheart_prec</span><span class="op">)</span>, prot <span class="op">=</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">shbheart_prot</span>,
+    b0.upper <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
 <span class="kw">for</span> <span class="op">(</span><span class="va">res_i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span>
@@ -496,7 +497,7 @@ equal to 1 on both precursor- and protein group-level data.</p>
 intensities<a class="anchor" aria-label="anchor" href="#detection-probability-curve-assuming-normal-observed-intensities-4"></a>
 </h3>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
 <span class="kw">for</span> <span class="op">(</span><span class="va">res_i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span>
     <span class="va">eachRes</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">[[</span><span class="va">res_i</span><span class="op">]</span><span class="op">]</span>
     <span class="fu"><a href="../reference/plotDPC.html">plotDPC</a></span><span class="op">(</span><span class="va">eachRes</span><span class="op">$</span><span class="va">nuis</span>, <span class="va">eachRes</span><span class="op">$</span><span class="va">dpcFit</span>, jitter.amount <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">shbheart_prec</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>,
@@ -549,7 +550,8 @@ is</p>
 <h3 id="empirical-logistic-splines-for-detected-proportions-5">Empirical logistic splines for detected proportions<a class="anchor" aria-label="anchor" href="#empirical-logistic-splines-for-detected-proportions-5"></a>
 </h3>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>prec <span class="op">=</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">usp1_prec</span><span class="op">)</span>, prot <span class="op">=</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">usp1_prot</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>prec <span class="op">=</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">usp1_prec</span>, b0.upper <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span>,
+    prot <span class="op">=</span> <span class="fu"><a href="../reference/gatherResults.html">gatherResults</a></span><span class="op">(</span><span class="va">usp1_prot</span>, b0.upper <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
 <span class="kw">for</span> <span class="op">(</span><span class="va">res_i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span>

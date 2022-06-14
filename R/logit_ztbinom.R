@@ -5,13 +5,14 @@
 #' @param wt A vector of the numbers of trials (samples size) for zero-truncated
 #' binomial distribution.
 #' @param beta0 Start values for the beta coefficients.
+#' @param b0.upper Upper bound for b0.
 #'
 #' @return Fitted beta coefficients and the fitting history.
 #' @examples
 #' ## See the vignettes.
 #' @importFrom stats optim pbinom dbinom binomial coef glm pbeta plogis qlogis
 #' @export
-logit_ztbinom <- function(dp, X, wt, beta0) {
+logit_ztbinom <- function(dp, X, wt, beta0, b0.upper = 0) {
 
   df <- length(beta0) - 1
   params <- beta0
@@ -22,7 +23,7 @@ logit_ztbinom <- function(dp, X, wt, beta0) {
 
   # the order of parameters goes alpha, b0, b1, and etc.
   lower.bounds <- c(-Inf, rep(0, df))
-  if (df > 0) upper.bounds <- c(0, rep(Inf, df))
+  if (df > 0) upper.bounds <- c(b0.upper, rep(Inf, df))
   else upper.bounds <- c(Inf)
   ztbinomFit <- stats::optim(params,
                       logit_ztbinom.ZT_negLL,
