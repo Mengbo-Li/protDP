@@ -15,7 +15,7 @@ editor_options:
   chunk_output_type: console
 ---
 ```{r setup, include = FALSE}
-options(width = 100, digits = 8)
+options(width = 100, digits = 4)
 knitr::opts_chunk$set(collapse = TRUE, 
                       comment = "#>", 
                       echo = TRUE, 

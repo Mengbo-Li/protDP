@@ -506,7 +506,7 @@ Estimated $\alpha$ values are equal to 1 on both precursor- and protein group-le
 ## Detection probability curve assuming normal observed intensities
 
 ```{r, fig.width = 8, fig.height = 10}
-par(mfrow = c(2, 2))
+par(mfrow = c(2, 1))
 for (res_i in 1:2) {
   eachRes <- res[[res_i]]
   plotDPC(eachRes$nuis, eachRes$dpcFit, jitter.amount = 1/ncol(shbheart_prec)/2, point.cex = 0.15)
