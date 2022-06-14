@@ -18,7 +18,7 @@ logit_ztbinom <- function(dp, X, wt, beta0, b0.upper = 0, b1.upper = Inf) {
   df <- length(beta0) - 1
   params <- beta0
   params.hist <- matrix(params, nrow = 1)
-  negLL <- protDP:::logit_ztbinom.ZT_negLL(params, dp, wt, X)
+  negLL <- logit_ztbinom.ZT_negLL(params, dp, wt, X)
   negLL.hist <- negLL
 
 
