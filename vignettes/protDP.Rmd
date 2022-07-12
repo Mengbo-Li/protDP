@@ -155,7 +155,7 @@ legend("bottomright", legend = c(paste("df = ", dfList), "Binom", "ZB"),
        col = c(lineColours, "black", "black"), lwd = 2, lty = c(1, 1, 1, 2, 1), cex = 0.4)
 ```
 
-The above plots correspond to Figure 2 of the manuscript. 
+The above plots correspond to Figure S2 of the manuscript. 
 
 
 
@@ -182,7 +182,7 @@ ggplot(slice(devs, 2:4), aes(x = df, y = percDevReduced)) +
   theme_classic()
 ```
 
-This plot corresponds to Table 2 of the manuscript. 
+This plot corresponds to Table 1 of the manuscript. 
 
 
 ## Empirical logit-linear curve with capped probabilities
@@ -198,7 +198,7 @@ plotEmpSplines(nuis, X = params0$X, cappedLinear$params, capped = TRUE,
                lineCol = lineColours[1], ylim = c(0, 1.04))
 ```
 
-The estimated value of $\alpha$ is approximately 1. This plot corresponds to Panel (a) in Figure 3 of the manuscript. 
+The estimated value of $\alpha$ is approximately 1. This plot corresponds to Panel (a) in Figure S3 of the manuscript. 
 
 
 
@@ -209,7 +209,7 @@ dpcFit <- dpc(nuis)
 plotDPC(nuis, dpcFit, ylim = c(0, 1.04))
 ```
 
-This plot corresponds to Panel (a) in Figure 4 of the manuscript. The estimated parameters are
+This plot corresponds to Panel (a) in Figure 2 of the manuscript. The estimated parameters are
 
 ```{r}
 round(dpcFit$beta, 2)
@@ -279,7 +279,7 @@ ggplot(slice(diapasefRes$devs, 2:4), aes(x = df, y = percDevReduced)) +
   theme_classic()
 ```
 
-This plot corresponds to Table 2 of the manuscript. 
+This plot corresponds to Table 1 of the manuscript. 
 
 ## Empirical logit-linear curve with capped probabilities
 
@@ -296,7 +296,7 @@ Parameters of the fitted curve are as follows:
 round(diapasefRes$cappedLinearFit$params, 2)
 ```
 
-This plot corresponds to Panel (b) in Figure 3 of the manuscript. 
+This plot corresponds to Panel (b) in Figure S3 of the manuscript. 
 
 
 ## Detection probability curve assuming normal observed intensities
@@ -305,7 +305,7 @@ This plot corresponds to Panel (b) in Figure 3 of the manuscript.
 plotDPC(diapasefRes$nuis, diapasefRes$dpcFit, add.jitter = FALSE, point.cex = 0.1)
 ```
 
-This plot corresponds to Panel (b) in Figure 4 of the manuscript with estimated parameters
+This plot corresponds to Panel (b) in Figure 2 of the manuscript with estimated parameters
 
 ```{r}
 round(diapasefRes$dpcFit$beta, 2)
@@ -369,7 +369,7 @@ ggplot(slice(maxdiaRes$devs, 2:4), aes(x = df, y = percDevReduced)) +
   theme_classic()
 ```
 
-This plot corresponds to Table 2 of the manuscript. 
+This plot corresponds to Table 1 of the manuscript. 
 
 ## Empirical logit-linear curve with capped probabilities
 
@@ -383,7 +383,7 @@ plotEmpSplines(maxdiaRes$nuis,
                point.cex = 0.1)
 ```
 
-This plot is Panel (c) in Figure 3 in the manuscript with estimated parameters being
+This plot is Panel (c) in Figure S3 in the manuscript with estimated parameters being
 
 ```{r}
 round(maxdiaRes$cappedLinearFit$params, 2)
@@ -396,7 +396,7 @@ round(maxdiaRes$cappedLinearFit$params, 2)
 plotDPC(maxdiaRes$nuis, maxdiaRes$dpcFit, jitter.amount = 1/ncol(dat)/2, point.cex = 0.1)
 ```
 
-This plot is Panel (c) in Figure 4 in the manuscript with estimated parameters being
+This plot is Panel (c) in Figure 2 in the manuscript with estimated parameters being
 
 ```{r}
 round(maxdiaRes$dpcFit$beta, 2)
@@ -465,7 +465,7 @@ ggplot(slice(ddaPlasmaRes$devs, 2:4), aes(x = df, y = percDevReduced)) +
   theme_classic()
 ```
 
-This plot corresponds to Table 2 from the main text. 
+This plot corresponds to Table 1 from the main text. 
 
 ## Empirical logit-linear curve with capped probabilities
 
@@ -475,7 +475,7 @@ plotEmpSplines(ddaPlasmaRes$nuis, X = ddaPlasmaRes$splineFits_params0[[1]]$X,
                lineCol = lineColours[1], add.jitter = FALSE)
 ```
 
-This plot is Panel (d) in Figure 3 of the manuscript, with estimated parameters being 
+This plot is Panel (d) in Figure S3 of the manuscript, with estimated parameters being 
 
 ```{r}
 round(ddaPlasmaRes$cappedLinearFit$params, 2)
@@ -488,7 +488,7 @@ round(ddaPlasmaRes$cappedLinearFit$params, 2)
 plotDPC(ddaPlasmaRes$nuis, ddaPlasmaRes$dpcFit, add.jitter = FALSE)
 ```
 
-This plot is Panel (d) in Figure 4 of the manuscript, with estimated parameters being 
+This plot is Panel (d) in Figure 2 of the manuscript, with estimated parameters being 
 
 ```{r}
 round(ddaPlasmaRes$dpcFit$beta, 2)
