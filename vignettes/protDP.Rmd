@@ -205,8 +205,8 @@ The estimated value of $\alpha$ is approximately 1. This plot corresponds to Pan
 ## Detection probability curve assuming normal observed intensities
 
 ```{r}
-dpcFit <- dpc(nuis)
-plotDPC(nuis, dpcFit, ylim = c(0, 1.04))
+dpcFit <- dpc(dat)
+plotDPC(dpcFit, ylim = c(0, 1.04))
 ```
 
 This plot corresponds to Panel (a) in Figure 2 of the manuscript. The estimated parameters are
@@ -302,7 +302,7 @@ This plot corresponds to Panel (b) in Figure S3 of the manuscript.
 ## Detection probability curve assuming normal observed intensities
 
 ```{r}
-plotDPC(diapasefRes$nuis, diapasefRes$dpcFit, add.jitter = FALSE, point.cex = 0.1)
+plotDPC(diapasefRes$dpcFit, add.jitter = FALSE, point.cex = 0.1)
 ```
 
 This plot corresponds to Panel (b) in Figure 2 of the manuscript with estimated parameters
@@ -393,7 +393,7 @@ round(maxdiaRes$cappedLinearFit$params, 2)
 ## Detection probability curve assuming normal observed intensities
 
 ```{r}
-plotDPC(maxdiaRes$nuis, maxdiaRes$dpcFit, jitter.amount = 1/ncol(dat)/2, point.cex = 0.1)
+plotDPC(maxdiaRes$dpcFit, jitter.amount = 1/ncol(dat)/2, point.cex = 0.1)
 ```
 
 This plot is Panel (c) in Figure 2 in the manuscript with estimated parameters being
@@ -485,7 +485,7 @@ round(ddaPlasmaRes$cappedLinearFit$params, 2)
 ## Detection probability curve assuming normal observed intensities
 
 ```{r}
-plotDPC(ddaPlasmaRes$nuis, ddaPlasmaRes$dpcFit, add.jitter = FALSE)
+plotDPC(ddaPlasmaRes$dpcFit, add.jitter = FALSE)
 ```
 
 This plot is Panel (d) in Figure 2 of the manuscript, with estimated parameters being 

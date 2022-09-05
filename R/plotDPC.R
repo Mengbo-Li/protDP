@@ -1,6 +1,5 @@
 #' Plot the detection probability curve
 #'
-#' @param nuis The list of nuisance parameters.
 #' @param dpcFit The DPC fit results.
 #' @param add.jitter Logical. Whether to add jitter to the detected proportion
 #' axis.
@@ -14,15 +13,14 @@
 #'
 #' @examples
 #' # See the vignettes.
-plotDPC <- function(nuis,
-                    dpcFit,
+plotDPC <- function(dpcFit,
                     add.jitter = TRUE,
                     jitter.amount = NULL,
                     point.cex = 0.2,
                     lwd = 2,
                     ylim = c(0, 1)) {
-  x <- (nuis$mu_obs + dpcFit$mu_mis)/2
-  y <- nuis$dp
+  x <- (dpcFit$mu_obs + dpcFit$mu_mis)/2
+  y <- dpcFit$dp
   if (add.jitter) y <- jitter(y, amount = jitter.amount)
   plot(x = x, y = y,
        pch = 16, cex = point.cex, ylim = ylim,

@@ -37,7 +37,6 @@ logit_ztbinom <- function(dp, X, wt, beta0, b0.upper = 0, b1.upper = Inf) {
   params.hist <- rbind(params.hist, newParams)
   negLL.hist <- c(negLL.hist, newnegLL)
 
-
   # clean up results
   info <- cbind(params.hist, negLL.hist)
   colnames(info) <- c(names(beta0), "neg.LL")

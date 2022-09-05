@@ -5,7 +5,6 @@
 \title{Plot the detection probability curve}
 \usage{
 plotDPC(
-  nuis,
   dpcFit,
   add.jitter = TRUE,
   jitter.amount = NULL,
@@ -15,8 +14,6 @@ plotDPC(
 )
 }
 \arguments{
-\item{nuis}{The list of nuisance parameters.}
-
 \item{dpcFit}{The DPC fit results.}
 
 \item{add.jitter}{Logical. Whether to add jitter to the detected proportion

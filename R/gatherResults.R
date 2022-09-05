@@ -51,7 +51,7 @@ gatherResults <- function(dat, b1.upper = 1, b0.upper = 0) {
                                          beta0 = cappedLinear_params0$betas_start,
                                          trace = FALSE)
   # Detection probability curve assuming normal observed intensities
-  dpcFit <- dpc(nuis, b1.upper = b1.upper)
+  dpcFit <- dpc(dat, b1.upper = b1.upper)
   return(list(nuis = nuis,
               splineFits_params0 = splineFits_params0,
               splineFits = splineFits,

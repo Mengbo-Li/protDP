@@ -14,5 +14,5 @@ test_that("Wrapper function of gathering results works", {
   expect_length(eg[[3]], 3)
   expect_identical(dim(eg[[4]]), c(4L, 4L))
   expect_length(eg[[5]], 2)
-  expect_length(eg[[6]], 4)
+  expect_length(eg[[6]], 6)
 })

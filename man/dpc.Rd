@@ -5,10 +5,11 @@
 \title{Detection probability curve for label free shotgun proteomics data
 assuming observed normal intensities}
 \usage{
-dpc(nuis, maxit = 100, eps = 1e-04, b1.upper = 1)
+dpc(y, maxit = 100, eps = 1e-04, b1.upper = 1)
 }
 \arguments{
-\item{nuis}{The list of nuisance parameters.}
+\item{y}{Log2-transformed precursor-level intensities with precursors on the
+rows and samples on the columns.}
 
 \item{maxit}{Maximum number of iterations.}
 

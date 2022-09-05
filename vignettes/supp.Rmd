@@ -120,7 +120,7 @@ We see that the estimated $\alpha$ value is 1.
 ## Detection probability curve assuming normal observed intensities
 
 ```{r}
-plotDPC(hyeProt$nuis, hyeProt$dpcFit, jitter.amount = NULL, point.cex = 0.15, ylim = c(0, 1.04))
+plotDPC(hyeProt$dpcFit, jitter.amount = NULL, point.cex = 0.15, ylim = c(0, 1.04))
 ```
 
 The estimated parameters for the detection probability curve are
@@ -206,7 +206,7 @@ round(scProt$cappedLinearFit$params, 2)
 ## Detection probability curve assuming normal observed intensities
 
 ```{r}
-plotDPC(scProt$nuis, scProt$dpcFit, add.jitter = FALSE, point.cex = 0.1)
+plotDPC(scProt$dpcFit, add.jitter = FALSE, point.cex = 0.1)
 ```
 
 Parameters of the detection probability curve are as follows: 
@@ -291,7 +291,7 @@ round(hepg2Prot$cappedLinearFit$params, 2)
 ## Detection probability curve assuming normal observed intensities
 
 ```{r}
-plotDPC(hepg2Prot$nuis, hepg2Prot$dpcFit, jitter.amount = 1/ncol(dat)/2)
+plotDPC(hepg2Prot$dpcFit, jitter.amount = 1/ncol(dat)/2)
 ```
 
 Parameters of the detection probability curve are 
@@ -379,7 +379,7 @@ round(ddaPlasmaProt$cappedLinearFit$params, 2)
 ## Detection probability curve assuming normal observed intensities
 
 ```{r}
-plotDPC(ddaPlasmaProt$nuis, ddaPlasmaProt$dpcFit, add.jitter = FALSE)
+plotDPC(ddaPlasmaProt$dpcFit, add.jitter = FALSE)
 ```
 
 Parameters for the fitted detection probability curve are
@@ -509,7 +509,7 @@ Estimated $\alpha$ values are equal to 1 on both precursor- and protein group-le
 par(mfrow = c(2, 1))
 for (res_i in 1:2) {
   eachRes <- res[[res_i]]
-  plotDPC(eachRes$nuis, eachRes$dpcFit, jitter.amount = 1/ncol(shbheart_prec)/2, point.cex = 0.15)
+  plotDPC(eachRes$dpcFit, jitter.amount = 1/ncol(shbheart_prec)/2, point.cex = 0.15)
   title(sub = c("Precursor-level", "Protein-level")[res_i])
 }
 ```
@@ -647,7 +647,7 @@ Estimated $\alpha$ values are 1 for both precursor- and protein group-level data
 par(mfrow = c(2, 1))
 for (res_i in 1:2) {
   eachRes <- res[[res_i]]
-  plotDPC(eachRes$nuis, eachRes$dpcFit, jitter.amount = 1/ncol(usp1_prec)/2, 
+  plotDPC(eachRes$dpcFit, jitter.amount = 1/ncol(usp1_prec)/2, 
           point.cex = 0.15, ylim = c(0, 1.08))
   title(sub = c("Precursor-level", "Protein-level")[res_i])
 }

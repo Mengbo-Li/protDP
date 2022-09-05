@@ -23,7 +23,9 @@ getNuisance <- function(Y) {
   wt <- rep(ncol(Y), nrow(Y))
   dp <- rowMeans(!is.na(Y))
   mu_obs <- rowMeans(Y, na.rm = TRUE)
-  fit0 <- limma::eBayes(lmFit(Y, design = matrix(1, nrow = ncol(Y))), trend = TRUE)
+  fit0 <- limma::eBayes(lmFit(Y,
+                              design = matrix(1, nrow = ncol(Y))),
+                        trend = TRUE)
   s2 <- fit0$s2.prior
   glmfit0 <- glm(dp ~ mu_obs, weights = wt, family = binomial)
   betaStart <- as.numeric(coef(glmfit0))
