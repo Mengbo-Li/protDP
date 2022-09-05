@@ -73,5 +73,6 @@ dpc <- function(y,
               df.prior = hp$df.prior,
               s2.prior = hp$s2.prior,
               mu_obs = mu_obs,
+              s2_obs = s2_obs,
               mu_mis = mu_mis))
 }

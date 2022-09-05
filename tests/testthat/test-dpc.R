@@ -3,7 +3,7 @@ test_that("Fitting a detection probability curve works", {
   eg.dpc <- dpc(log2(datasetA$prot))
 
   expect_type(eg.dpc, "list")
-  expect_length(eg.dpc, 10)
+  expect_length(eg.dpc, 11)
   expect_length(eg.dpc[[1]], 2)
   expect_equal(ncol(eg.dpc[[2]]), 3)
   expect_type(eg.dpc[[3]], "double")
