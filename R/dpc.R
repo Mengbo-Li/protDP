@@ -68,6 +68,10 @@ dpc <- function(y,
               hist = info,
               betaStart = betaStart,
               dp = dp,
+              mu0 = hp$mu0,
+              n0 = hp$n0,
+              df.prior = hp$df.prior,
+              s2.prior = hp$s2.prior,
               mu_obs = mu_obs,
               mu_mis = mu_mis))
 }
