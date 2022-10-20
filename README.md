@@ -24,7 +24,20 @@ To install the package, use the following script in R:
 devtools::install_github("Mengbo-Li/protDP")
 ```
 
-## Examples
+## Quick start
+
+If you are interested in investigating the relationship between intensity and detection/missing values on your own proteomics dataset, then you can try the following as a quick start: 
+
+```
+dpcfit <- dpc(dat)
+plotDPC(dpcfit)
+```
+where `dat` is the log2-intensity matrix, with rows being precursors/proteins and columns being the samples, and `dat` contains some missing values as `NA`. 
+
+The `plotDPC()` function then visualises the detection probability curve (DPC) from which you can inspect whether missingness is dependent on the underlying intensity values on your dataset. This tells you whether missingness is missing not at random (MNAR). 
+
+
+## More examples
 
 See data examples at https://mengbo-li.github.io/protDP/articles/protDP.html. 
 

@@ -84,7 +84,16 @@
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"Mengbo-Li/protDP"</span><span class="op">)</span></span></code></pre>
 </div>
 <div class="section level2">
-<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+<h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
+</h2>
+<p>If you are interested in investigating the relationship between intensity and detection/missing values on your own proteomics dataset, then you can try the following as a quick start:</p>
+<pre><code><span><span class="va">dpcfit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dpc.html">dpc</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/plotDPC.html">plotDPC</a></span><span class="op">(</span><span class="va">dpcfit</span><span class="op">)</span></span></code></pre>
+<p>where <code>dat</code> is the log2-intensity matrix, with rows being precursors/proteins and columns being the samples, and <code>dat</code> contains some missing values as <code>NA</code>.</p>
+<p>The <code><a href="reference/plotDPC.html">plotDPC()</a></code> function then visualises the detection probability curve (DPC) from which you can inspect whether missingness is dependent on the underlying intensity values on your dataset. This tells you whether missingness is missing not at random (MNAR).</p>
+</div>
+<div class="section level2">
+<h2 id="more-examples">More examples<a class="anchor" aria-label="anchor" href="#more-examples"></a>
 </h2>
 <p>See data examples at <a href="https://mengbo-li.github.io/protDP/articles/protDP.html" class="external-link uri">https://mengbo-li.github.io/protDP/articles/protDP.html</a>.</p>
 </div>
