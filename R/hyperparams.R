@@ -4,6 +4,7 @@
 #'
 #' @return List of hyperparameters and the posterior means and variances.
 #' @importFrom stats var
+#' @importFrom statmod logmdigamma
 #' @export
 #'
 #' @examples
@@ -20,22 +21,20 @@ hyperparams <- function(y) {
   s2.post <- sv$var.post
   # Estimate mu0
   mu0 <- mean(mu)
+  # Estimate n0
+  n <- df.residual + 1
+  modt <- (mu - mu0) / sqrt(s2.post/n)
+  n0 <- n0EstimateFromModT(tstat = modt,
+                           df = df.total,
+                           n = n,
+                           niter = 20L,
+                           eps = 1e-5,
+                           trace = FALSE)
+  # posterior mean and variance
+  mu_obs.post <- (n*mu + n0*mu0) / (n + n0)
   if (is.infinite(df.prior)) {
-    n0 <- Inf
-    mu_obs.post <- mu
-    s2_obs.post <- s2
+    s2_obs.post <- sv$var.post
   } else {
-    # Estimate n0
-    n <- df.residual + 1
-    modt <- (mu - mu0) / sqrt(s2.post/n)
-    n0 <- n0EstimateFromModT(tstat = modt,
-                             df = df.total,
-                             n = n,
-                             niter = 20L,
-                             eps = 1e-5,
-                             trace = FALSE)
-    # posterior mean and variance
-    mu_obs.post <- (n*mu + n0*mu0) / (n + n0)
     s2_obs.post <- (n*n0*(mu-mu0)^2/(n+n0) + (n-1)*s2 +
                       df.prior*s2.prior) /(n+df.prior)
     s2_obs.post[is.na(s2_obs.post)] <- s2.prior

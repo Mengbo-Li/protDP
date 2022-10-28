@@ -14,7 +14,7 @@ Description: Detection probability curve is estimated for label free shotgun
     shotgun proteomics data". 
 License: file LICENSE
 Depends: R (>= 3.5)
-Imports: limma, splines, stats
+Imports: limma, splines, stats, statmod
 Suggests: 
     knitr,
     tidyverse,

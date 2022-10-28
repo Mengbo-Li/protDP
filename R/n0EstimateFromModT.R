@@ -1,5 +1,6 @@
 #' Estimate the effective sample size hyperparamter n0
 #' This function is called in the `hyperparams` function.
+#' Created 4 Aug 2022. Last modified 26 Oct 2022.
 #' @noRd
 n0EstimateFromModT <- function(tstat,
                                df,
@@ -8,7 +9,7 @@ n0EstimateFromModT <- function(tstat,
                                eps = 1e-5,
                                trace = FALSE) {
   tstat <- as.numeric(tstat)
-  ExpectedLogF <- mean(log(df/2) - log(1/2) + digamma(1/2) - digamma(df/2))
+  ExpectedLogF <- mean(logmdigamma(df/2) - logmdigamma(1/2))
   RHS <- 2*mean(log(abs(tstat))) - ExpectedLogF
 
   # Monotonically convergent Newton iteration for v0 = 1/n0
