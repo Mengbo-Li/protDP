@@ -15,6 +15,9 @@ data. We also propose a model for detection probability which describes
 the probability of an observation being detected given its underlying intensity
 for label-free shotgun proteomics data. 
 
+## Reference
+Li, M. and Smyth, G.K., 2023. Neither random nor censored: estimating intensity-dependent probabilities for missing values in label-free proteomics. Bioinformatics, 39(5), [btad200](https://doi.org/10.1093/bioinformatics/btad200). 
+
 ## Installation 
 
 To install the package, use the following script in R:
