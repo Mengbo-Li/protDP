@@ -1,0 +1,12 @@
+bibentry(
+  bibtype  = "Article",
+  title="Neither random nor censored: estimating intensity-dependent probabilities for missing values in label-free proteomics",
+  author="Li, Mengbo and Smyth, Gordon K",
+  journal="Bioinformatics",
+  volume="39",
+  number="5",
+  pages="btad200",
+  year="2023",
+  publisher="Oxford University Press",
+  doi="https://doi.org/10.1093/bioinformatics/btad200"
+)
